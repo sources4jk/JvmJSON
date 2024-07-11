@@ -10,7 +10,13 @@ object JsonStringManager {
         }
 
         return buildString {
-            append("{\n")
+            append("{")
+            if (indent > 0) {
+                append("\n")
+            } else {
+                append(" ")
+            }
+
             json.entries.forEachIndexed { index, entry ->
                 val value = entry.value
 
@@ -18,12 +24,16 @@ object JsonStringManager {
                 append(jsonValueToString(value, indent, depth + 1))
 
                 if (index != json.entries.size - 1) {
-                    append(",")
+                    append(", ")
                 }
 
-                append("\n")
+                if (indent > 0) append("\n")
             }
-            append(" ".repeat(indent * (depth - 1)))
+            if (indent > 0) {
+                append(" ".repeat(indent * (depth - 1)))
+            } else {
+                append(" ")
+            }
             append("}")
         }
     }
