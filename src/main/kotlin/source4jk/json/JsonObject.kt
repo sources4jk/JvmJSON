@@ -54,6 +54,10 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
             constructor.buildAction()
             return JsonObject(constructor.map)
         }
+
+        fun from(map: Map<String, *>): JsonObject {
+            return JsonObject(map.toMutableMap())
+        }
     }
 
 }

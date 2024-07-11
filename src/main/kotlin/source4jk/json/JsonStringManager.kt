@@ -27,7 +27,9 @@ object JsonStringManager {
                     append(", ")
                 }
 
-                if (indent > 0) append("\n")
+                if (indent > 0) {
+                    append("\n")
+                }
             }
             if (indent > 0) {
                 append(" ".repeat(indent * (depth - 1)))
@@ -44,7 +46,7 @@ object JsonStringManager {
             is String -> "\"$value\""
             is JsonObject -> jsonObjectToString(value, indent, depth)
             null -> "null"
-            else -> error("asd")
+            else -> throw InvalidJsonValueTypeException()
         }
     }
 }
