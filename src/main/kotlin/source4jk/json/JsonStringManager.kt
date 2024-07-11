@@ -2,7 +2,7 @@ package source4jk.json
 
 /*
 Example:
-    fun main() {
+fun main() {
     val json = { ... }
     println(json.toString(intent = 4))
 }
