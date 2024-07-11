@@ -1,5 +1,28 @@
 package source4jk.json
 
+/*
+Example:
+    fun main() {
+    val json = { ... }
+    println(json.toString(intent = 4))
+}
+Output:
+{
+    "key1": 123456789,
+    "key2": "string value",
+    "key3": true,
+    "key4": false,
+    "key5": null,
+    "key6": {
+        "key7": 987654321
+    },
+    "key8": {
+        "key9": {}
+    }
+}
+*/
+
+
 object JsonStringManager {
 
     fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
