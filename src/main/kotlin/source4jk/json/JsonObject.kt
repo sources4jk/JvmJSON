@@ -1,24 +1,21 @@
 package source4jk.json
 
-class JsonObject private constructor(
-    private val map: MutableMap<String, Any?>
-): MutableIterable<MutableMap.MutableEntry<String, Any?>> {
+import java.io.Serializable
+
+class JsonObject private constructor(private val map: MutableMap<String, Any?>):
+    MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializable {
 
     val entries: MutableSet<MutableMap.MutableEntry<String, Any?>>
         get() = this.map.entries
-
     val keys: MutableSet<String>
         get() = this.map.keys
-
     val values: MutableCollection<Any?>
         get() = this.map.values
 
 
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String): T? {
-        return this.entries.find { entry ->
-            entry.key == key
-        }?.value as? T
+        return this.entries.find { it.key == key }?.value as? T
     }
 
     fun set(key: String, value: Any?): Any? {
@@ -26,17 +23,21 @@ class JsonObject private constructor(
     }
 
     fun remove(key: String): Any? {
-        return this.entries.find { entry ->
-            entry.key == key
-        }?.also { entry ->
-            this.map.remove(key)
-            entry.value
-        }
+        return this.map.remove(key)
+    }
+
+    override fun toString(): String {
+        return JsonStringManager.jsonObjectToString(this, 0, 1)
+    }
+
+    fun toString(indent: Int): String {
+        return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
         return this.map.iterator()
     }
+
 
     class Constructor {
         internal val map: MutableMap<String, Any?> = mutableMapOf()
@@ -46,21 +47,13 @@ class JsonObject private constructor(
         }
     }
 
-    companion object Static {
 
+    companion object Static {
         fun create(buildAction: Constructor.() -> Unit): JsonObject {
             val constructor = Constructor()
             constructor.buildAction()
-
             return JsonObject(constructor.map)
         }
-
-        fun from(map: MutableMap<String, Any?>): JsonObject {
-            return JsonObject(map)
-        }
-
-        fun from(string: String): JsonObject {
-            TODO()
-        }
     }
+
 }
