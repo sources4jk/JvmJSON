@@ -1,37 +1,16 @@
 package source4jk.json
 
-import java.io.Serializable
+class JsonObject private constructor(
+    private val map: MutableMap<String, Any?>,
+    private val modes: Set<JsonAccessMode>
+): AbstractJsonObject(map) {
 
-class JsonObject private constructor(private val map: MutableMap<String, Any?>):
-    MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializable {
-
-    val entries: MutableSet<MutableMap.MutableEntry<String, Any?>>
-        get() = this.map.entries
-    val keys: MutableSet<String>
-        get() = this.map.keys
-    val values: MutableCollection<Any?>
-        get() = this.map.values
-
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String): T? {
-        return this.entries.find { it.key == key }?.value as? T
-    }
-
-    fun set(key: String, value: Any?): Any? {
-        return this.map.put(key, value)
-    }
-
-    fun remove(key: String): Any? {
-        return this.map.remove(key)
+    fun toString(indent: Int): String {
+        return JsonStringManager.ObjectToString.jsonToString(this, indent, 1)
     }
 
     override fun toString(): String {
-        return JsonStringManager.jsonObjectToString(this, 0, 1)
-    }
-
-    fun toString(indent: Int): String {
-        return JsonStringManager.jsonObjectToString(this, indent, 1)
+        return JsonStringManager.ObjectToString.jsonToString(this, 0, 1)
     }
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
@@ -52,11 +31,19 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
         fun create(buildAction: Constructor.() -> Unit): JsonObject {
             val constructor = Constructor()
             constructor.buildAction()
-            return JsonObject(constructor.map)
+            return JsonObject(constructor.map, JsonAccessMode.ALL)
         }
 
-        fun from(map: Map<String, *>): JsonObject {
-            return JsonObject(map.toMutableMap())
+        fun from(map: Map<String, *>, modes: Set<JsonAccessMode>): JsonObject {
+            return JsonObject(map.toMutableMap(), modes)
+        }
+
+        fun from(string: String, modes: Set<JsonAccessMode>): JsonObject {
+            return JsonStringManager.StringToObject.stringToJsonObject(string, modes)
+        }
+
+        fun empty(modes: Set<JsonAccessMode>): JsonObject {
+            return JsonObject(mutableMapOf(), modes)
         }
     }
 
