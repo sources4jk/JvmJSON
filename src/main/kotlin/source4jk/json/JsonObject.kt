@@ -1,17 +1,19 @@
 package source4jk.json
 
+import java.io.Serializable
+
 class JsonObject private constructor(
-    private val map: MutableMap<String, Any?>,
-    private val modes: Set<JsonAccessMode>
-): AbstractJsonObject(map) {
+    private val map: MutableMap<String, Any?>
+) : MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializable {
+    val entries get() = this.map.entries
+    val keys get() = this.map.keys
+    val values get() = this.map.values
 
-    fun toString(indent: Int): String {
-        return JsonStringManager.ObjectToString.jsonToString(this, indent, 1)
+
+    fun toString(indent: Int = 0): String {
+        return JsonStringManager.jsonObjectToString(this, indent, 0)
     }
 
-    override fun toString(): String {
-        return JsonStringManager.ObjectToString.jsonToString(this, 0, 1)
-    }
 
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
         return this.map.iterator()
@@ -31,19 +33,19 @@ class JsonObject private constructor(
         fun create(buildAction: Constructor.() -> Unit): JsonObject {
             val constructor = Constructor()
             constructor.buildAction()
-            return JsonObject(constructor.map, JsonAccessMode.ALL)
+            return JsonObject(constructor.map)
         }
 
-        fun from(map: Map<String, *>, modes: Set<JsonAccessMode>): JsonObject {
-            return JsonObject(map.toMutableMap(), modes)
+        fun from(source: Map<String, *>): JsonObject {
+            return JsonObject(source.toMutableMap())
         }
 
-        fun from(string: String, modes: Set<JsonAccessMode>): JsonObject {
-            return JsonStringManager.StringToObject.stringToJsonObject(string, modes)
+        fun from(source: String): JsonObject {
+            return JsonStringManager.stringToJsonObject(source)
         }
 
-        fun empty(modes: Set<JsonAccessMode>): JsonObject {
-            return JsonObject(mutableMapOf(), modes)
+        fun empty(): JsonObject {
+            return JsonObject(mutableMapOf())
         }
     }
 
