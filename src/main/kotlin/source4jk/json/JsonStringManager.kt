@@ -1,6 +1,7 @@
 package source4jk.json
 
 object JsonStringManager {
+
     fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
@@ -49,12 +50,12 @@ object JsonStringManager {
             is String -> "\"$value\""
             is JsonObject -> jsonObjectToString(value, indent, depth)
             null -> "null"
-            else -> throw InvalidJsonValueTypeException()
+            else -> throw IllegalJsonValueTypeException()
         }
     }
 
 
-    fun stringToJsonObject(string: String): JsonObject {
+    fun stringToJsonObject(source: String): JsonObject {
         val json = JsonObject.empty()
 
         return json
