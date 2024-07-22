@@ -2,13 +2,56 @@ package source4jk.json
 
 /**
  * Standard implementation of the IJO interface representing a JSON object.
- * Provides methods for converting the JSON object to a string, iterating over its entries,
- * and constructing JSON objects using a fluent API.
+ * Provides methods for iterating over its entries, retrieving, setting, and removing key-value pairs,
+ * as well as converting the JSON object to a string with optional indentation.
+ *
+ * ### **Example usages:**
+ * ```
+ * JsonObject.create {
+ *      "first_name" set "Linus"
+ *      "last_name" set "Torvalds"
+ * }
+ *
+ * JsonObject.from(mapOf(...))
+ *
+ * JsonObject.from("{ ... }")
+ *
+ * JsonObject.empty()
+ * ```
  */
 class JsonObject private constructor(private val map: MutableMap<String, Any?>): IJO<String, Any?> {
     override val entries get() = this.map.entries
     override val keys get() = this.map.keys
     override val values get() = this.map.values
+
+    /**
+     * Retrieves a value associated with the specified key.
+     * @param key The key to look up.
+     * @return The value associated with the key, or null if the key is not found.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> get(key: String): Any? {
+        return this.entries.find { it.key == key }?.value as? T
+    }
+
+    /**
+     * Sets a key-value pair in the JSON object.
+     * @param key The key to set.
+     * @param value The value to associate with the key.
+     * @return The previous value associated with the key, or null if there was no previous value.
+     */
+    fun set(key: String, value: Any?): Any? {
+        return this.map.put(key, value)
+    }
+
+    /**
+     * Removes a key-value pair from the JSON object.
+     * @param key The key to remove.
+     * @return The value that was associated with the key, or null if the key was not found.
+     */
+    fun remove(key: String): Any? {
+        return this.map.remove(key)
+    }
 
     /**
      * Converts the JSON object to a formatted string with a specified indentation level.
@@ -53,7 +96,6 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
     }
 
     companion object Static {
-        const val serialVersionUID: Long = 1L
 
         /**
          * Creates a JsonObject manually by specifying key-value pairs.

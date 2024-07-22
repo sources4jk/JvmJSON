@@ -2,7 +2,7 @@ package source4jk.json
 
 object JsonStringManager {
 
-    fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
+    fun <K, V> jsonObjectToString(json: IJO<K, V>, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
         if (json.entries.isEmpty()) {
@@ -44,7 +44,7 @@ object JsonStringManager {
         }
     }
 
-    private fun valueToString(value: Any?, indent: Int, depth: Int): String {
+    private fun <V> valueToString(value: V, indent: Int, depth: Int): String {
         return when (value) {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
