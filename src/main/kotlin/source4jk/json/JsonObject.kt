@@ -4,20 +4,6 @@ package source4jk.json
  * Standard implementation of the IJO interface representing a JSON object.
  * Provides methods for iterating over its entries, retrieving, setting, and removing key-value pairs,
  * as well as converting the JSON object to a string with optional indentation.
- *
- * ### **Example usages:**
- * ```
- * JsonObject.create {
- *      "first_name" set "Linus"
- *      "last_name" set "Torvalds"
- * }
- *
- * JsonObject.from(mapOf(...))
- *
- * JsonObject.from("{ ... }")
- *
- * JsonObject.empty()
- * ```
  */
 class JsonObject private constructor(private val map: MutableMap<String, Any?>): IJO<String, Any?> {
     override val entries get() = this.map.entries
@@ -29,8 +15,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
      * @param key The key to look up.
      * @return The value associated with the key, or null if the key is not found.
      */
-    @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String): Any? {
+    inline fun <reified T> get(key: String): T? {
         return this.entries.find { it.key == key }?.value as? T
     }
 
