@@ -2,7 +2,7 @@ package source4jk.json
 
 object JsonStringManager {
 
-    fun <K, V> jsonObjectToString(json: IJO<K, V>, indent: Int, depth: Int): String {
+    fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
         if (json.entries.isEmpty()) {
@@ -44,7 +44,7 @@ object JsonStringManager {
         }
     }
 
-    private fun <V> valueToString(value: V, indent: Int, depth: Int): String {
+    private fun valueToString(value: Any?, indent: Int, depth: Int): String {
         return when (value) {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
@@ -89,6 +89,7 @@ object JsonStringManager {
                         index++
                         return json
                     }
+
                     index < length && source[index] == ',' -> index++
                     else -> throw IllegalJsonStringException("Expected '}' or ',' at position $index")
                 }
@@ -132,10 +133,12 @@ object JsonStringManager {
                     index += 4
                     true
                 }
+
                 source.startsWith("false", index) -> {
                     index += 5
                     false
                 }
+
                 else -> throw IllegalJsonStringException("Unexpected value at position $index")
             }
         }
@@ -160,6 +163,7 @@ object JsonStringManager {
                         if (hasDecimalPoint) throw IllegalJsonStringException("Multiple decimal points in number at position $index")
                         hasDecimalPoint = true
                     }
+
                     'e', 'E' -> {
                         if (hasExponent) throw IllegalJsonStringException("Multiple exponents in number at position $index")
                         hasExponent = true
