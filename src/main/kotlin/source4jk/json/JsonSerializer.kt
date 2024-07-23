@@ -35,7 +35,7 @@ object JsonSerializer {
      *
      * @param name The name of the file (without extension) to read the JSON object from.
      * @param path The directory path where the file is located.
-     * @return The JSON object read from the file.
+     * @return The JSON object from the file.
      * @throws IllegalJsonFilePath if the provided path is blank or empty.
      */
     fun open(name: String, path: String): IJO<*, *> {
