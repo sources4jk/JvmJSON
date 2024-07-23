@@ -14,6 +14,8 @@ interface IJO<K, V>: MutableIterable<MutableMap.MutableEntry<K, V>>, Serializabl
     val keys: MutableSet<K>
     val values: MutableCollection<V>
 
+    fun toString(indent: Int): String
+
     companion object Static {
         const val serialVersionUID: Long = 1L
     }

@@ -1,7 +1,7 @@
 package source4jk.json
 
 /**
- * Standard implementation of the IJO interface representing a JSON object.
+ * Default implementation of the IJO interface representing a JSON object.
  * Provides methods for iterating over its entries, retrieving, setting, and removing key-value pairs,
  * as well as converting the JSON object to a string with optional indentation.
  */
@@ -39,20 +39,20 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
     }
 
     /**
-     * Converts the JSON object to a formatted string with a specified indentation level.
-     * @param indent The number of spaces to use for indentation.
-     * @return A string representation of the JSON object.
-     */
-    fun toString(indent: Int): String {
-        return JsonStringManager.jsonObjectToString(this, indent, 1)
-    }
-
-    /**
      * Converts the JSON object to a compact string without indentation.
      * @return A compact string representation of the JSON object.
      */
     override fun toString(): String {
         return JsonStringManager.jsonObjectToString(this, 0, 1)
+    }
+
+    /**
+     * Converts the JSON object to a formatted string with a specified indentation level.
+     * @param indent The number of spaces to use for indentation.
+     * @return A string representation of the JSON object.
+     */
+    override fun toString(indent: Int): String {
+        return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
     /**

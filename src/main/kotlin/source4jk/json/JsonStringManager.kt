@@ -73,45 +73,40 @@ object JsonStringManager {
                 return json
             }
 
-            while (true) {
+            while (index < length) {
                 skipWhitespace()
 
                 val key = parseString()
 
                 skipWhitespace()
+                requireChar(':')
+                val value = parseValue()
+                json.set(key, value)
 
-                if (index < length && source[index] == ':') {
-                    index++
-                    val value = parseValue()
-
-                    json.set(key, value)
-
-                    skipWhitespace()
-
-                    if (index < length && source[index] == '}') {
+                skipWhitespace()
+                when {
+                    index < length && source[index] == '}' -> {
                         index++
                         return json
-
-                    } else if (index < length && source[index] == ',') {
-                        index++
-                    } else {
-                        throw IllegalJsonStringException("Expected '}' or ',' at position $index")
                     }
-                } else {
-                    throw IllegalJsonStringException("Expected ':' at position $index")
+                    index < length && source[index] == ',' -> index++
+                    else -> throw IllegalJsonStringException("Expected '}' or ',' at position $index")
                 }
             }
+            throw IllegalJsonStringException("Unexpected end of input")
         }
 
         private fun parseString(): String {
-            index++
+            requireChar('"')
             val start = index
 
             while (index < length && source[index] != '"') {
                 index++
             }
 
-            if (index >= length) throw IllegalJsonStringException("Unterminated string at position $index")
+            if (index >= length) {
+                throw IllegalJsonStringException("Unterminated string at position $index")
+            }
 
             val result = source.substring(start, index)
             index++
@@ -126,13 +121,13 @@ object JsonStringManager {
                 index < length && source[index] == '"' -> parseString()
                 index < length && (source[index] == 't' || source[index] == 'f') -> parseBoolean()
                 index < length && source[index] == 'n' -> parseNull()
-                source.substring(index).startsWith("-") || source[index].isDigit() -> parseNumber()
+                index < length && (source[index] == '-' || source[index].isDigit()) -> parseNumber()
                 else -> throw IllegalJsonStringException("Unexpected character at position $index")
             }
         }
 
         private fun parseBoolean(): Boolean {
-            val value = when {
+            return when {
                 source.startsWith("true", index) -> {
                     index += 4
                     true
@@ -143,7 +138,6 @@ object JsonStringManager {
                 }
                 else -> throw IllegalJsonStringException("Unexpected value at position $index")
             }
-            return value
         }
 
         private fun parseNull(): Any? {
@@ -161,13 +155,15 @@ object JsonStringManager {
             var hasExponent = false
 
             while (index < length && (source[index].isDigit() || source[index] == '.' || source[index] == '-' || source[index] == 'e' || source[index] == 'E')) {
-                if (source[index] == '.') {
-                    if (hasDecimalPoint) throw IllegalJsonStringException("Multiple decimal points in number at position $index")
-                    hasDecimalPoint = true
-                }
-                if (source[index] == 'e' || source[index] == 'E') {
-                    if (hasExponent) throw IllegalJsonStringException("Multiple exponents in number at position $index")
-                    hasExponent = true
+                when (source[index]) {
+                    '.' -> {
+                        if (hasDecimalPoint) throw IllegalJsonStringException("Multiple decimal points in number at position $index")
+                        hasDecimalPoint = true
+                    }
+                    'e', 'E' -> {
+                        if (hasExponent) throw IllegalJsonStringException("Multiple exponents in number at position $index")
+                        hasExponent = true
+                    }
                 }
                 index++
             }
@@ -184,6 +180,13 @@ object JsonStringManager {
             while (index < length && source[index].isWhitespace()) {
                 index++
             }
+        }
+
+        private fun requireChar(expected: Char) {
+            if (index >= length || source[index] != expected) {
+                throw IllegalJsonStringException("Expected '$expected' at position $index")
+            }
+            index++
         }
     }
 
