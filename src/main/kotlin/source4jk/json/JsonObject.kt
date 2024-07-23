@@ -12,6 +12,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Retrieves a value associated with the specified key.
+     *
      * @param key The key to look up.
      * @return The value associated with the key, or null if the key is not found.
      */
@@ -21,6 +22,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Sets a key-value pair in the JSON object.
+     *
      * @param key The key to set.
      * @param value The value to associate with the key.
      * @return The previous value associated with the key, or null if there was no previous value.
@@ -31,6 +33,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Removes a key-value pair from the JSON object.
+     *
      * @param key The key to remove.
      * @return The value that was associated with the key, or null if the key was not found.
      */
@@ -40,6 +43,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Converts the JSON object to a compact string without indentation.
+     *
      * @return A compact string representation of the JSON object.
      */
     override fun toString(): String {
@@ -48,6 +52,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Converts the JSON object to a formatted string with a specified indentation level.
+     *
      * @param indent The number of spaces to use for indentation.
      * @return A string representation of the JSON object.
      */
@@ -57,6 +62,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
     /**
      * Returns an iterator over the entries in the JSON object.
+     *
      * @return An iterator over the key-value pairs in the JSON object.
      */
     override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
@@ -71,6 +77,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
         /**
          * Sets a key-value pair in the JSON object being constructed.
+         *
          * @param value The value to associate with the key.
          * @return The current Constructor instance for method chaining.
          */
@@ -84,6 +91,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
         /**
          * Creates a JsonObject manually by specifying key-value pairs.
+         *
          * @param buildAction A lambda with receiver to construct the JsonObject.
          * @return A new JsonObject instance with the specified data.
          */
@@ -94,6 +102,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
         /**
          * Creates a JsonObject from an existing map.
+         *
          * @param source The source map to convert.
          * @return A new JsonObject instance containing the entries from the source map.
          */
@@ -103,6 +112,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
         /**
          * Parses a JSON string into a JsonObject.
+         *
          * @param source The JSON string to parse.
          * @return A new JsonObject instance representing the JSON data.
          * @throws IllegalJsonStringException If the JSON string is invalid.
@@ -113,6 +123,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
 
         /**
          * Creates an empty JsonObject.
+         *
          * @return An empty JsonObject instance.
          */
         fun empty(): JsonObject {
