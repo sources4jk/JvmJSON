@@ -3,10 +3,11 @@ plugins {
 }
 
 group = 'source4jk.json'
-version = '0.0.1'
+version = '0.9.4'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 kotlin {
