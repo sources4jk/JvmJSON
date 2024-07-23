@@ -1,6 +1,11 @@
-package source4jk.json
+package source4jk.json.obj
 
-object JsonStringManager {
+import source4jk.json.IllegalJsonStringException
+import source4jk.json.IllegalValueTypeException
+import source4jk.json.array.JsonArray
+import source4jk.json.array.JsonArrayStringer
+
+object JsonObjectStringer {
 
     fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
@@ -49,8 +54,9 @@ object JsonStringManager {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
             is JsonObject -> jsonObjectToString(value, indent, depth)
+            is JsonArray -> JsonArrayStringer.jsonArrayToString(value, indent, depth)
             null -> "null"
-            else -> throw IllegalJsonValueTypeException()
+            else -> throw IllegalValueTypeException()
         }
     }
 

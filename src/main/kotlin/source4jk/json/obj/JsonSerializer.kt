@@ -1,5 +1,6 @@
-package source4jk.json
+package source4jk.json.obj
 
+import source4jk.json.IllegalJsonFilePath
 import java.io.FileInputStream
 import java.io.FileOutputStream
 

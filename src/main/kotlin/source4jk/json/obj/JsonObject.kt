@@ -1,4 +1,4 @@
-package source4jk.json
+package source4jk.json.obj
 
 /**
  * Default implementation of the IJO interface representing a JSON object.
@@ -47,7 +47,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
      * @return A compact string representation of the JSON object.
      */
     override fun toString(): String {
-        return JsonStringManager.jsonObjectToString(this, 0, 1)
+        return JsonObjectStringer.jsonObjectToString(this, 0, 1)
     }
 
     /**
@@ -57,7 +57,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
      * @return A string representation of the JSON object.
      */
     override fun toString(indent: Int): String {
-        return JsonStringManager.jsonObjectToString(this, indent, 1)
+        return JsonObjectStringer.jsonObjectToString(this, indent, 1)
     }
 
     /**
@@ -95,6 +95,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
          * @param buildAction A lambda with receiver to construct the JsonObject.
          * @return A new JsonObject instance with the specified data.
          */
+        @JvmStatic
         fun create(buildAction: Constructor.() -> Constructor): JsonObject {
             val constructor = Constructor().apply { buildAction() }
             return JsonObject(constructor.map)
@@ -106,9 +107,11 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
          * @param source The source map to convert.
          * @return A new JsonObject instance containing the entries from the source map.
          */
-        fun from(source: Map<String, *>): JsonObject {
+        @JvmStatic
+        fun from(source: MutableMap<String, *>): JsonObject {
             return JsonObject(source.toMutableMap())
         }
+
 
         /**
          * Parses a JSON string into a JsonObject.
@@ -117,8 +120,9 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
          * @return A new JsonObject instance representing the JSON data.
          * @throws IllegalJsonStringException If the JSON string is invalid.
          */
+        @JvmStatic
         fun from(source: String): JsonObject {
-            return JsonStringManager.stringToJsonObject(source)
+            return JsonObjectStringer.stringToJsonObject(source)
         }
 
         /**
@@ -126,6 +130,7 @@ class JsonObject private constructor(private val map: MutableMap<String, Any?>):
          *
          * @return An empty JsonObject instance.
          */
+        @JvmStatic
         fun empty(): JsonObject {
             return JsonObject(mutableMapOf())
         }
