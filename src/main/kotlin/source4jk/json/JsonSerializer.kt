@@ -1,38 +1,32 @@
 package source4jk.json
 
-import java.io.BufferedOutputStream
-import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 
 object JsonSerializer {
 
-    fun <K, V> write(json: IJO<K, V>, path: String, name: String, indent: Int = 0): IJO<K, V> {
-        val filePath = buildString {
-            if (path.isNotEmpty() && path.isNotBlank()) {
-                append(path)
-                append("/")
-            }
-            append(name)
+    fun <K, V> write(json: IJO<K, V>, name: String, path: String, indent: Int = 0) {
+        if (path.isBlank() || path.isEmpty()) {
+            throw IllegalJsonFilePath()
         }
 
-        return FileOutputStream(filePath).use { fileOutputStream ->
-            BufferedOutputStream(fileOutputStream).use { buffer ->
-                buffer.write(json.toString(indent).toByteArray())
-                buffer.flush()
-                json
+        FileOutputStream("$path/$name.json").use { stream ->
+            stream.bufferedWriter().use { writer ->
+                writer.write(json.toString(indent))
+                writer.flush()
             }
         }
     }
 
-    fun open(path: String, name: String): JsonObject {
-        val filePath = buildString {
-            if (path.isNotEmpty() && path.isNotBlank()) {
-                append(path)
-                append("/")
-            }
-            append(name)
+    fun open(name: String, path: String): JsonObject {
+        if (path.isBlank() || path.isEmpty()) {
+            throw IllegalJsonFilePath()
         }
 
-        return JsonObject.from(File(filePath).readText())
+        return FileInputStream("$path/$name.json").use { stream ->
+            stream.bufferedReader().use { reader ->
+                JsonObject.from(reader.readText())
+            }
+        }
     }
 }

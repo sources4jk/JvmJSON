@@ -17,6 +17,6 @@ interface IJO<K, V>: MutableIterable<MutableMap.MutableEntry<K, V>>, Serializabl
     fun toString(indent: Int): String
 
     companion object Static {
-        const val serialVersionUID: Long = 1L
+        private const val serialVersionUID: Long = 1L
     }
 }
