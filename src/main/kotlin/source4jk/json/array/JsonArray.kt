@@ -1,61 +1,67 @@
 package source4jk.json.array
 
+import source4jk.json.StringManager
+
 /**
  * Default implementation of the IJA interface representing a JSON array.
  * Provides methods for accessing, adding, setting, and removing elements,
  * as well as converting the JSON array to a string with optional indentation.
  */
-class JsonArray private constructor(private val list: MutableList<Any?>): IJA<Any?> {
-    override val values get() = this.list
+class JsonArray private constructor(private val list: MutableList<Any?>): IJA {
+    override val elements get() = this.list
 
     /**
-     * Retrieves a value at the specified index.
+     * Retrieves the element at the specified index.
      *
-     * @param index The index to look up.
-     * @return The value at the specified index, or null if the index is out of bounds.
+     * @param index The index of the element to retrieve.
+     * @return The element at the specified index, cast to type T, or null if the index is out of bounds or the element is not of type T.
      */
-    inline fun <reified T> get(index: Int): T? {
-        return this.values[index] as? T
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> get(index: Int): T? {
+        return this.elements[index] as? T
     }
 
     /**
-     * Adds a value to the JSON array.
+     * Adds an element to the end of the array.
      *
-     * @param value The value to add.
-     * @return True if the value was added successfully, false otherwise.
+     * @param element The element to add to the array.
+     * @return The added element.
      */
-    fun add(value: Any?): Boolean {
-        return this.list.add(value)
+    override fun add(element: Any?): Any? {
+        this.list.add(element)
+        return element
     }
 
     /**
-     * Sets a value at the specified index in the JSON array.
+     * Inserts an element at the specified index in the array.
      *
-     * @param value The value to set.
-     * @param index The index at which to set the value.
-     * @return The previous value at the specified index, or null if there was no previous value.
+     * @param index The index at which to insert the element.
+     * @param element The element to insert.
+     * @return The added element.
      */
-    fun set(value: Any?, index: Int): Any? {
-        return this.list.set(index, value)
+    override fun add(index: Int, element: Any?): Any? {
+        this.list.add(index, element)
+        return element
     }
 
     /**
-     * Removes the first occurrence of a value from the JSON array.
+     * Removes the first occurrence of the specified element from the array.
      *
-     * @param value The value to remove.
-     * @return True if the value was removed successfully, false otherwise.
+     * @param element The element to remove.
+     * @return The removed element, or null if the element was not found.
      */
-    fun remove(value: Any?): Boolean {
-        return this.list.remove(value)
+    override fun remove(element: Any?): Any? {
+        this.list.remove(element)
+        return element
     }
 
     /**
-     * Removes a value at the specified index from the JSON array.
+     * Removes the element at the specified index.
      *
-     * @param index The index of the value to remove.
-     * @return The value that was removed, or null if the index is out of bounds.
+     * @param index The index of the element to remove.
+     * @return The removed element.
      */
-    fun removeAt(index: Int): Any? {
+    override fun removeAt(index: Int): Any? {
         return this.list.removeAt(index)
     }
 
@@ -65,17 +71,17 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA<An
      * @return A compact string representation of the JSON array.
      */
     override fun toString(): String {
-        return JsonArrayStringer.jsonArrayToString(this, 0, 1)
+        return StringManager.jsonArrayToString(this, 0, 1)
     }
 
     /**
      * Converts the JSON array to a formatted string with a specified indentation level.
      *
      * @param indent The number of spaces to use for indentation.
-     * @return A string representation of the JSON array.
+     * @return A string representation of the JSON array with the specified indentation.
      */
     override fun toString(indent: Int): String {
-        return JsonArrayStringer.jsonArrayToString(this, indent, 1)
+        return StringManager.jsonArrayToString(this, indent, 1)
     }
 
     /**
@@ -92,12 +98,12 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA<An
         /**
          * Creates a JsonArray with the specified values.
          *
-         * @param values The values to include in the JsonArray.
+         * @param elements The values to include in the JsonArray.
          * @return A new JsonArray instance with the specified values.
          */
         @JvmStatic
-        fun create(vararg values: Any?): JsonArray {
-            return JsonArray(values.toMutableList())
+        fun create(vararg elements: Any?): IJA {
+            return JsonArray(elements.toMutableList())
         }
 
         /**
@@ -107,7 +113,7 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA<An
          * @return A new JsonArray instance containing the elements from the source array.
          */
         @JvmStatic
-        fun from(source: Array<*>): JsonArray {
+        fun from(source: Array<*>): IJA {
             return JsonArray(source.toMutableList())
         }
 
@@ -118,8 +124,34 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA<An
          * @return A new JsonArray instance containing the elements from the source list.
          */
         @JvmStatic
-        fun from(source: MutableList<*>): JsonArray {
+        fun from(source: List<*>): IJA {
             return JsonArray(source.toMutableList())
+        }
+
+        /**
+         * Creates a JsonArray from an existing IJA instance.
+         *
+         * @param source The source IJA instance to convert.
+         * @return A new JsonArray instance containing the elements from the source IJA.
+         */
+        fun from(source: IJA): IJA {
+            val array = this.empty()
+
+            source.forEachIndexed { index, element ->
+                array.add(index, element)
+            }
+
+            return array
+        }
+
+        /**
+         * Creates a JsonArray from a JSON string representation.
+         *
+         * @param source The JSON string to parse into a JsonArray.
+         * @return A new JsonArray instance created from the JSON string.
+         */
+        fun from(source: String): IJA {
+            return StringManager.stringToJsonArray(source)
         }
 
         /**
@@ -128,7 +160,7 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA<An
          * @return An empty JsonArray instance.
          */
         @JvmStatic
-        fun empty(): JsonArray {
+        fun empty(): IJA {
             return JsonArray(mutableListOf())
         }
     }
