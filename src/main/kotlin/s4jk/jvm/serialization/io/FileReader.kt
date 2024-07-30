@@ -1,4 +1,4 @@
-package s4jk.jvm.serialization
+package s4jk.jvm.serialization.io
 
 import java.io.File
 import java.io.FileInputStream

@@ -1,4 +1,4 @@
-package s4jk.jvm.serialization
+package s4jk.jvm.serialization.io
 
 import java.io.File
 import java.io.FileOutputStream
@@ -13,12 +13,12 @@ import java.nio.charset.Charset
  * @property extension The file extension (e.g., "json").
  * @property charset The character encoding used for writing to the file.
  */
-class FileWritter(
+class FileWriter(
     override val path: String,
     override val name: String,
     override val extension: String,
     override val charset: Charset
-) : IFM {
+): IFM {
     private val file: File = File("$path/$name.$extension")
 
     /**

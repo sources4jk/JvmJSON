@@ -2,7 +2,7 @@ package s4jk.jvm.serialization.objects
 
 import org.jetbrains.annotations.NotNull
 import s4jk.jvm.serialization.JsonStringManager
-import s4jk.jvm.serialization.JsonSerializer
+import s4jk.jvm.serialization.serializer.JsonSerializer
 import java.nio.charset.Charset
 import java.util.*
 import java.util.function.Consumer
@@ -23,21 +23,25 @@ abstract class AbstractJsonObject protected constructor(
     override val values get() = this.map.values
 
     override fun serializer(charset: Charset) = JsonSerializer(this, charset)
+
     override fun serializer() = JsonSerializer(this, Charsets.UTF_8)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> get(key: String): T? {
-        return this.entries.find { it.key == key }?.value as? T
+        return this.entries.find { it.key == key }?.value as T
     }
 
-    override fun set(key: String, value: Any?): IJO {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getOrDefault(key: String, defaultValue: T?): T? {
+        return this.map.getOrDefault(key, defaultValue) as T
+    }
+
+    override fun set(key: String, value: Any?) {
         this.map[key] = value
-        return this
     }
 
-    override fun remove(key: String): IJO {
-        this.map.remove(key)
-        return this
+    override fun remove(key: String): Any? {
+        return this.map.remove(key)
     }
 
     override fun toString(): String {

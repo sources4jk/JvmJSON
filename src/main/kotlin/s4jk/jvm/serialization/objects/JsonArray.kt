@@ -2,30 +2,66 @@ package s4jk.jvm.serialization.objects
 
 import s4jk.jvm.serialization.JsonStringManager
 
-
 /**
  * Creates a [JsonArray] from the provided elements.
  *
- * This function allows for a concise and flexible way to build JSON arrays programmatically by specifying
- * a variable number of elements. The elements are converted into a list and then used to create a [JsonArray].
+ * This function enables the creation of a [JsonArray] by specifying a variable number of elements. The elements
+ * are converted into a list and then used to construct a [JsonArray].
  *
  * @param elements The elements to include in the JSON array.
- * @return Returns an [IJA] instance representing the created [JsonArray].
+ * @return An [IJA] instance representing the created [JsonArray].
  */
 fun jsonArrayOf(vararg elements: Any?): IJA {
     return JsonArray.from(elements.toList())
 }
 
 /**
- * Concrete implementation of a [IJA], extending the [AbstractJsonArray] class.
- * This class provides methods for creating and manipulating JSON arrays in various ways, including
- * initializing from different data sources such as arrays, lists, and JSON strings.
+ * Converts an array into a [JsonArray].
+ *
+ * This extension function creates a [JsonArray] from the elements of the array. The array elements are converted
+ * into a list and used to construct the [JsonArray].
+ *
+ * @return An [IJA] instance representing the created [JsonArray].
+ */
+fun Array<*>.toJsonArray(): IJA {
+    return jsonArrayOf(*this)
+}
+
+/**
+ * Converts a list into a [JsonArray].
+ *
+ * This extension function creates a [JsonArray] from the elements of the list. The list elements are used directly
+ * to construct the [JsonArray].
+ *
+ * @return An [IJA] instance representing the created [JsonArray].
+ */
+fun List<*>.toJsonArray(): IJA {
+    return jsonArrayOf(*this.toTypedArray())
+}
+
+/**
+ * Converts a JSON string into a [JsonArray].
+ *
+ * This extension function parses a JSON-formatted string into a [JsonArray]. The resulting [JsonArray] contains
+ * the data represented by the JSON string.
+ *
+ * @return An [IJA] instance representing the parsed JSON data.
+ */
+fun String.toJsonArray(): IJA {
+    return jsonArrayOf(this)
+}
+
+/**
+ * Concrete implementation of [IJA], extending [AbstractJsonArray].
+ * This class provides methods for creating and manipulating JSON arrays from various data sources
+ * such as arrays, lists, and JSON strings.
  */
 class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(list) {
+
     companion object Static {
 
         /**
-         * Creates an empty JSON array.
+         * Creates an empty [JsonArray].
          *
          * @return A new [JsonArray] instance with an empty list.
          */
@@ -76,7 +112,7 @@ class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(
         /**
          * Parses a JSON string into a [JsonArray].
          *
-         * @param source The JSON string to parse.
+         * @param source The JSON string to parse into a [JsonArray].
          * @return A new [JsonArray] instance representing the parsed JSON data.
          */
         @JvmStatic
