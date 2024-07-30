@@ -1,8 +1,8 @@
-package source4jk.json.obj
+package s4jk.jvm.serialization.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import source4jk.json.serialization.JsonSerializer
+import s4jk.jvm.serialization.JsonSerializer
 import java.io.Serializable
 import java.nio.charset.Charset
 
@@ -17,8 +17,8 @@ import java.nio.charset.Charset
  */
 interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializable {
 
-    @get:Nullable
-    val name: String?
+    @get:NotNull
+    val name: String
 
     @get:NotNull
     val entries: Set<Map.Entry<String, Any?>>
@@ -36,8 +36,10 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
      * @return The JSON serializer.
      */
     @NotNull
-    fun serializer(@NotNull charset: Charset = Charsets.UTF_8): JsonSerializer
+    fun serializer(@NotNull charset: Charset): JsonSerializer
 
+    @NotNull
+    fun serializer(): JsonSerializer
     /**
      * Retrieves a value associated with the specified key.
      *
@@ -81,10 +83,10 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
      * @return A string representation of the JSON object with the specified indentation.
      */
     @NotNull
-    fun toString(indent: Int): String
+    fun toString(@NotNull indent: Int): String
 
     companion object Static {
         @NotNull
-        private const val serialVersionUID: Long = 1468177767L
+        private const val serialVersionUID: Long = 621009875L
     }
 }

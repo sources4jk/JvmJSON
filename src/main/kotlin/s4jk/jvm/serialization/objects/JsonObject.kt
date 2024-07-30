@@ -1,8 +1,9 @@
-package source4jk.json.obj
+package s4jk.jvm.serialization.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import source4jk.json.JsonStringManager
+import s4jk.jvm.serialization.JSUtils
+import s4jk.jvm.serialization.JsonStringManager
 
 /**
  * Creates a [JsonObject] with an optional name and a custom build action.
@@ -19,8 +20,11 @@ import source4jk.json.JsonStringManager
  * to a new [JsonObject.Constructor] instance and should configure its map.
  * @return Returns an [IJO] instance representing the created [JsonObject].
  */
-fun jsonObjectOf(name: String? = null, buildAction: JsonObject.Constructor.() -> JsonObject.Constructor): IJO {
-    val constructor = JsonObject.Constructor().apply{ buildAction() }
+fun jsonObjectOf(
+    name: String = JSUtils.generateName(null),
+    buildAction: JsonObject.Constructor.() -> JsonObject.Constructor
+): IJO {
+    val constructor = JsonObject.Constructor().apply { buildAction() }
     return JsonObject.from(name, constructor.map)
 }
 
@@ -30,9 +34,9 @@ fun jsonObjectOf(name: String? = null, buildAction: JsonObject.Constructor.() ->
  * initializing from different data sources such as maps and JSON strings.
  */
 class JsonObject private constructor(
-    objectName: String?,
-    map: MutableMap<String, Any?>
-): AbstractJsonObject(objectName, map) {
+    @Nullable objectName: String?,
+    @NotNull map: MutableMap<String, Any?>
+): AbstractJsonObject(JSUtils.generateName(objectName), map) {
 
     class Constructor {
         internal val map: MutableMap<String, Any?> = mutableMapOf()
@@ -43,6 +47,7 @@ class JsonObject private constructor(
         }
     }
 
+
     companion object Static {
 
         /**
@@ -52,8 +57,13 @@ class JsonObject private constructor(
          * @return A new [JsonObject] instance with the specified name and an empty map.
          */
         @JvmStatic
-        fun create(@Nullable name: String? = null): IJO {
+        fun create(@Nullable name: String?): IJO {
             return JsonObject(name, mutableMapOf())
+        }
+
+        @JvmStatic
+        fun create(): IJO {
+            return create(null)
         }
 
         /**
@@ -64,14 +74,19 @@ class JsonObject private constructor(
          * @return A new [JsonObject] instance containing the entries from the source map.
          */
         @JvmStatic
-        fun from(@Nullable name: String? = null, @NotNull source: Map<*, *>): IJO {
-            val json = this.create(name)
+        fun from(@Nullable name: String?, @NotNull source: Map<*, *>): IJO {
+            val json = create(name)
 
             source.forEach { (key, value) ->
                 json.set(key.toString(), value)
             }
 
             return json
+        }
+
+        @JvmStatic
+        fun from(@NotNull source: Map<*, *>): IJO {
+            return from(null, source)
         }
 
         /**
@@ -82,14 +97,19 @@ class JsonObject private constructor(
          * @return A new [JsonObject] instance containing the entries from the source [IJO].
          */
         @JvmStatic
-        fun from(@Nullable name: String? = null, @NotNull source: IJO): IJO {
-            val json = this.create(name)
+        fun from(@Nullable name: String?, @NotNull source: IJO): IJO {
+            val json = create(name)
 
             source.entries.forEach { (key, value) ->
                 json.set(key, value)
             }
 
             return json
+        }
+
+        @JvmStatic
+        fun from(@NotNull source: IJO): IJO {
+            return from(null, source)
         }
 
         /**
@@ -100,8 +120,13 @@ class JsonObject private constructor(
          * @return A new [JsonObject] instance representing the parsed JSON data.
          */
         @JvmStatic
-        fun from(@Nullable name: String? = null, @NotNull source: String): IJO {
+        fun from(@Nullable name: String?, @NotNull source: String): IJO {
             return JsonStringManager.stringToJsonObject(name, source)
+        }
+
+        @JvmStatic
+        fun from(@NotNull source: String): IJO {
+            return from(null, source)
         }
     }
 }

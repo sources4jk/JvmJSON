@@ -1,4 +1,4 @@
-package source4jk.json.serialization
+package s4jk.jvm.serialization
 
 import java.io.File
 import java.io.FileOutputStream

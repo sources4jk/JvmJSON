@@ -1,11 +1,9 @@
-package source4jk.json.serialization
+package s4jk.jvm.serialization
 
-import source4jk.json.obj.IJO
-import source4jk.json.obj.JsonObject
+import s4jk.jvm.serialization.objects.IJO
+import s4jk.jvm.serialization.objects.JsonObject
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
 
@@ -35,13 +33,25 @@ class JsonSerializer(private val json: IJO, private val charset: Charset) {
      * @throws IOException If an I/O error occurs.
      */
     @Throws(IOException::class)
-    fun toFile(path: String? = null, indent: Int = 0): JsonSerializer {
-        FileWritter(this.resolveFilePath(path), this.json.name ?: "", "json", this.charset).writeTo(
-            this.json.toString(
-                indent
-            )
-        )
+    fun toFile(path: String, indent: Int = 0): JsonSerializer {
+        FileWritter(this.resolveFilePath(path), this.json.name, "json", this.charset)
+            .writeTo(this.json.toString(indent))
         return this
+    }
+
+    @Throws(IOException::class)
+    fun toFile(path: String): JsonSerializer {
+        return this.toFile(path, 0)
+    }
+
+    @Throws(IOException::class)
+    fun toFile(indent: Int = 0): JsonSerializer {
+        return this.toFile("", indent)
+    }
+
+    @Throws(IOException::class)
+    fun toFile(): JsonSerializer {
+        return this.toFile("", 0)
     }
 
     /**
@@ -53,14 +63,16 @@ class JsonSerializer(private val json: IJO, private val charset: Charset) {
      * @throws FileNotFoundException If the specified file is not found.
      */
     @Throws(IOException::class, FileNotFoundException::class)
-    fun fromFile(path: String? = null): JsonSerializer {
-        JsonObject.from(
-            null,
-            FileReader(this.resolveFilePath(path), this.json.name ?: "", "json", this.charset).readFile()
-        ).forEach { (key, value) ->
-            this.json.set(key, value)
-        }
+    fun fromFile(path: String): JsonSerializer {
+        JsonObject.from(FileReader(this.resolveFilePath(path), this.json.name, "json", this.charset).readFile())
+            .forEach { (key, value) -> this.json.set(key, value) }
+
         return this
+    }
+
+    @Throws(IOException::class, FileNotFoundException::class)
+    fun fromFile(): JsonSerializer {
+        return this.fromFile("")
     }
 
     /**

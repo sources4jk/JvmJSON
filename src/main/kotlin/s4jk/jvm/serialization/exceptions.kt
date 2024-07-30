@@ -1,4 +1,4 @@
-package source4jk.json
+package s4jk.jvm.serialization
 
 import java.io.FileNotFoundException
 

@@ -1,4 +1,4 @@
-package source4jk.json.serialization
+package s4jk.jvm.serialization
 
 import java.io.File
 import java.io.FileInputStream
@@ -19,7 +19,7 @@ class FileReader(
     override val extension: String,
     override val charset: Charset
 ) : IFM {
-    private val file: File = File("${path}/$name.$extension")
+    private val file: File = File("$path/$name.$extension")
 
     /**
      * Reads the contents of the file and returns it as a string.

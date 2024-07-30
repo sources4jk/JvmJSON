@@ -1,9 +1,9 @@
-package source4jk.json
+package s4jk.jvm.serialization
 
-import source4jk.json.array.IJA
-import source4jk.json.array.JsonArray
-import source4jk.json.obj.IJO
-import source4jk.json.obj.JsonObject
+import s4jk.jvm.serialization.objects.IJA
+import s4jk.jvm.serialization.objects.JsonArray
+import s4jk.jvm.serialization.objects.IJO
+import s4jk.jvm.serialization.objects.JsonObject
 
 object JsonStringManager {
 
@@ -31,7 +31,7 @@ object JsonStringManager {
                 }
 
                 append("\"${entry.key}\": ")
-                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
+                append(valueToString(value, indent, depth + 1))
 
                 if (index != json.entries.size - 1) {
                     append(", ")
@@ -51,10 +51,10 @@ object JsonStringManager {
     }
 
     @JvmStatic
-    fun jsonArrayToString(array: JsonArray, indent: Int, depth: Int): String {
+    fun jsonArrayToString(array: IJA, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
-        if (array.elements.isEmpty()) {
+        if (array.isEmpty()) {
             return "[]"
         }
 
@@ -67,15 +67,15 @@ object JsonStringManager {
                 append(" ")
             }
 
-            array.elements.forEachIndexed { index, value ->
+            array.forEachIndexed { index, value ->
                 if (indent > 0) {
                     append(spaces)
                 }
 
-                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
+                append(valueToString(value, indent, depth + 1))
 
 
-                if (index != array.elements.size - 1) {
+                if (index != array.size - 1) {
                     append(", ")
                 }
 
@@ -97,14 +97,14 @@ object JsonStringManager {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
             is JsonObject -> jsonObjectToString(value, indent, depth)
-            is JsonArray -> this.jsonArrayToString(value, indent, depth)
+            is JsonArray -> jsonArrayToString(value, indent, depth)
             null -> "null"
             else -> throw IllegalValueTypeException()
         }
     }
 
     @JvmStatic
-    fun stringToJsonObject(name: String? = null, source: String): IJO {
+    fun stringToJsonObject(name: String?, source: String): IJO {
         return StringParser(name, source).parseObject()
     }
 
@@ -113,7 +113,7 @@ object JsonStringManager {
         return StringParser("", source).parseArray()
     }
 
-    private class StringParser(private val name: String? = null, private val source: String) {
+    private class StringParser(private val name: String?, private val source: String) {
         private var index = 0
         private val length = source.length
 
@@ -152,7 +152,7 @@ object JsonStringManager {
         }
 
         fun parseArray(): IJA {
-            val array = JsonArray.empty()
+            val array = JsonArray.create()
             index++
             this.skipWhitespace()
 

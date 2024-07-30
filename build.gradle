@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
 }
 
-group = 'source4jk.json'
+group = 's4jk.jvm.serialization'
 version = '0.9.6'
 
 repositories {
@@ -12,5 +12,5 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(8)
 }
