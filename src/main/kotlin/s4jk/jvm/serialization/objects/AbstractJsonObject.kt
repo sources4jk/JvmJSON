@@ -22,9 +22,7 @@ abstract class AbstractJsonObject protected constructor(
     override val keys get() = this.map.keys
     override val values get() = this.map.values
 
-    override fun serializer(charset: Charset) = JsonSerializer(this, charset)
-
-    override fun serializer() = JsonSerializer(this, Charsets.UTF_8)
+    override fun serializer() = JsonSerializer(this)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> get(key: String): T? {

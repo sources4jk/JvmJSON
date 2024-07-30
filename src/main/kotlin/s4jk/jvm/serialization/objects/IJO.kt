@@ -30,15 +30,6 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
     val values: Collection<Any?>
 
     /**
-     * Creates a JSON serializer for the object with the specified charset.
-     *
-     * @param charset The charset for serialization. Defaults to UTF-8 if not provided.
-     * @return The JSON serializer configured with the given charset.
-     */
-    @NotNull
-    fun serializer(@NotNull charset: Charset): JsonSerializer
-
-    /**
      * Creates a JSON serializer for the object with the default charset (UTF-8).
      *
      * @return The JSON serializer configured with the default charset.
