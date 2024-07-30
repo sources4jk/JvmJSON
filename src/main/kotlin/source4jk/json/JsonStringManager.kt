@@ -5,8 +5,9 @@ import source4jk.json.array.JsonArray
 import source4jk.json.obj.IJO
 import source4jk.json.obj.JsonObject
 
-object StringManager {
+object JsonStringManager {
 
+    @JvmStatic
     fun jsonObjectToString(json: IJO, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
@@ -30,7 +31,7 @@ object StringManager {
                 }
 
                 append("\"${entry.key}\": ")
-                append(this@StringManager.valueToString(value, indent, depth + 1))
+                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
                 if (index != json.entries.size - 1) {
                     append(", ")
@@ -49,6 +50,7 @@ object StringManager {
         }
     }
 
+    @JvmStatic
     fun jsonArrayToString(array: JsonArray, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
@@ -70,7 +72,7 @@ object StringManager {
                     append(spaces)
                 }
 
-                append(this@StringManager.valueToString(value, indent, depth + 1))
+                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
 
                 if (index != array.elements.size - 1) {
@@ -101,11 +103,12 @@ object StringManager {
         }
     }
 
-
+    @JvmStatic
     fun stringToJsonObject(name: String? = null, source: String): IJO {
         return StringParser(name, source).parseObject()
     }
 
+    @JvmStatic
     fun stringToJsonArray(source: String): IJA {
         return StringParser("", source).parseArray()
     }
@@ -115,7 +118,7 @@ object StringManager {
         private val length = source.length
 
         fun parseObject(): IJO {
-            val json = JsonObject.empty(name)
+            val json = JsonObject.create(name)
             index++
             this.skipWhitespace()
 
@@ -142,10 +145,10 @@ object StringManager {
                     }
 
                     index < length && source[index] == ',' -> index++
-                    else -> throw IllegalJsonStringException("Expected '}' or ',' at position $index")
+                    else -> throw IllegalJsonStringParserException("Expected '}' or ',' at position $index")
                 }
             }
-            throw IllegalJsonStringException("Unexpected end of input")
+            throw IllegalJsonStringParserException("Unexpected end of input")
         }
 
         fun parseArray(): IJA {
@@ -171,10 +174,10 @@ object StringManager {
                     }
 
                     index < length && source[index] == ',' -> index++
-                    else -> throw IllegalJsonStringException("Expected ']' or ',' at position $index")
+                    else -> throw IllegalJsonStringParserException("Expected ']' or ',' at position $index")
                 }
             }
-            throw IllegalJsonStringException("Unexpected end of input")
+            throw IllegalJsonStringParserException("Unexpected end of input")
         }
 
         private fun parseString(): String {
@@ -186,7 +189,7 @@ object StringManager {
             }
 
             if (index >= length) {
-                throw IllegalJsonStringException("Unterminated string at position $index")
+                throw IllegalJsonStringParserException("Unterminated string at position $index")
             }
 
             val result = source.substring(start, index)
@@ -203,7 +206,7 @@ object StringManager {
                 source.startsWith("null", index) -> this.parseNull()
                 source.startsWith("{", index) -> this.parseObject()
                 source.startsWith("[", index) -> this.parseArray()
-                else -> throw IllegalJsonStringException("Unexpected character at position $index")
+                else -> throw IllegalJsonStringParserException("Unexpected character at position $index")
             }
         }
 
@@ -215,7 +218,7 @@ object StringManager {
                 index += 5
                 false
             } else {
-                throw IllegalJsonStringException("Unexpected value at position $index")
+                throw IllegalJsonStringParserException("Unexpected value at position $index")
             }
         }
 
@@ -224,7 +227,7 @@ object StringManager {
                 index += 4
                 return null
             } else {
-                throw IllegalJsonStringException("Unexpected value at position $index")
+                throw IllegalJsonStringParserException("Unexpected value at position $index")
             }
         }
 
@@ -236,12 +239,12 @@ object StringManager {
             while (index < length && source[index] in "-0123456789.eE") {
                 when (source[index]) {
                     '.' -> {
-                        if (hasDecimalPoint) throw IllegalJsonStringException("Multiple decimal points in number at position $index")
+                        if (hasDecimalPoint) throw IllegalJsonStringParserException("Multiple decimal points in number at position $index")
                         hasDecimalPoint = true
                     }
 
                     'e', 'E' -> {
-                        if (hasExponent) throw IllegalJsonStringException("Multiple exponents in number at position $index")
+                        if (hasExponent) throw IllegalJsonStringParserException("Multiple exponents in number at position $index")
                         hasExponent = true
                     }
                 }
@@ -260,7 +263,7 @@ object StringManager {
 
         private fun requireChar(expected: Char) {
             if (index >= length || source[index] != expected) {
-                throw IllegalJsonStringException("Expected '$expected' at position $index")
+                throw IllegalJsonStringParserException("Expected '$expected' at position $index")
             }
             index++
         }
