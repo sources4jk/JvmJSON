@@ -3,7 +3,6 @@ package s4jk.jvm.serialization.objects
 import org.jetbrains.annotations.NotNull
 import s4jk.jvm.serialization.JsonStringManager
 import s4jk.jvm.serialization.serializer.JsonSerializer
-import java.nio.charset.Charset
 import java.util.*
 import java.util.function.Consumer
 

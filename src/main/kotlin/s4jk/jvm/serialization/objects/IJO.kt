@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import s4jk.jvm.serialization.serializer.JsonSerializer
 import java.io.Serializable
-import java.nio.charset.Charset
 
 /**
  * Interface for representing JSON-like objects, enabling custom functionality through implementation.
