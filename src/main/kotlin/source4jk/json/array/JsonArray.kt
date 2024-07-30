@@ -1,6 +1,6 @@
 package source4jk.json.array
 
-import source4jk.json.StringManager
+import source4jk.json.JsonStringManager
 
 /**
  * Default implementation of the IJA interface representing a JSON array.
@@ -71,7 +71,7 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA {
      * @return A compact string representation of the JSON array.
      */
     override fun toString(): String {
-        return StringManager.jsonArrayToString(this, 0, 1)
+        return JsonStringManager.jsonArrayToString(this, 0, 1)
     }
 
     /**
@@ -81,7 +81,7 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA {
      * @return A string representation of the JSON array with the specified indentation.
      */
     override fun toString(indent: Int): String {
-        return StringManager.jsonArrayToString(this, indent, 1)
+        return JsonStringManager.jsonArrayToString(this, indent, 1)
     }
 
     /**
@@ -151,7 +151,7 @@ class JsonArray private constructor(private val list: MutableList<Any?>): IJA {
          * @return A new JsonArray instance created from the JSON string.
          */
         fun from(source: String): IJA {
-            return StringManager.stringToJsonArray(source)
+            return JsonStringManager.stringToJsonArray(source)
         }
 
         /**

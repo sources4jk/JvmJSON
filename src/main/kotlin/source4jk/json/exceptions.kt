@@ -1,5 +1,9 @@
 package source4jk.json
 
-class IllegalValueTypeException : Exception("JSON document cannot support this value type")
+import java.io.FileNotFoundException
 
-class IllegalJsonStringException(message: String) : Exception(message)
+class IllegalValueTypeException: Exception("JSON document cannot support this value type")
+
+class IllegalJsonStringParserException(message: String): Exception(message)
+
+class JsonSerializationException(message: String): Exception(message)
