@@ -1,4 +1,4 @@
-package s4jk.jvm.serialization.objects
+package s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable

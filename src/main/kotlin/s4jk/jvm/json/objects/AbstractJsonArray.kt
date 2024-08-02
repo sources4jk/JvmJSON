@@ -1,6 +1,6 @@
-package s4jk.jvm.serialization.objects
+package s4jk.jvm.json.objects
 
-import s4jk.jvm.serialization.JsonStringManager
+import s4jk.jvm.json.JsonStringManager
 import java.util.*
 import java.util.function.*
 import java.util.function.Function

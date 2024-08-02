@@ -1,9 +1,9 @@
-package s4jk.jvm.serialization
+package s4jk.jvm.json
 
-import s4jk.jvm.serialization.objects.IJA
-import s4jk.jvm.serialization.objects.JsonArray
-import s4jk.jvm.serialization.objects.IJO
-import s4jk.jvm.serialization.objects.JsonObject
+import s4jk.jvm.json.objects.IJA
+import s4jk.jvm.json.objects.JsonArray
+import s4jk.jvm.json.objects.IJO
+import s4jk.jvm.json.objects.JsonObject
 
 object JsonStringManager {
 

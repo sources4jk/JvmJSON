@@ -1,9 +1,9 @@
-package s4jk.jvm.serialization.objects
+package s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import s4jk.jvm.serialization.serializer.JsonSerializer
-import java.io.Serializable
+import s4jk.jvm.json.io.JsonInputOutput
+import java.nio.charset.Charset
 
 /**
  * Interface for representing JSON-like objects, enabling custom functionality through implementation.
@@ -14,7 +14,7 @@ import java.io.Serializable
  * @property keys A set of keys contained in the object.
  * @property values A collection of values contained in the object.
  */
-interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializable {
+interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
 
     @get:NotNull
     val name: String
@@ -28,13 +28,9 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
     @get:NotNull
     val values: Collection<Any?>
 
-    /**
-     * Creates a JSON serializer for the object with the default charset (UTF-8).
-     *
-     * @return The JSON serializer configured with the default charset.
-     */
+
     @NotNull
-    fun serializer(): JsonSerializer
+    fun IO(charset: Charset = Charsets.UTF_8): JsonInputOutput
 
     /**
      * Retrieves a value associated with the specified key.
@@ -65,7 +61,6 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
      * @param key The key to set in the JSON object.
      * @param value The value to associate with the key. Can be null.
      */
-    @NotNull
     fun set(@NotNull key: String, @Nullable value: Any?)
 
     /**
@@ -74,7 +69,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
      * @param key The key to remove from the JSON object.
      * @return The value that was associated with the key, or null if the key was not found.
      */
-    @NotNull
+    @Nullable
     fun remove(@NotNull key: String): Any?
 
     /**
@@ -93,9 +88,4 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>>, Serializa
      */
     @NotNull
     fun toString(@NotNull indent: Int): String
-
-    companion object Static {
-        @NotNull
-        private const val serialVersionUID: Long = 621009875L
-    }
 }

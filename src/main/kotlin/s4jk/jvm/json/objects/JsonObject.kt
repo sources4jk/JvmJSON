@@ -1,9 +1,9 @@
-package s4jk.jvm.serialization.objects
+package s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import s4jk.jvm.serialization.JSUtils
-import s4jk.jvm.serialization.JsonStringManager
+import s4jk.jvm.json.JSUtils
+import s4jk.jvm.json.JsonStringManager
 
 /**
  * Creates a [JsonObject] with an optional name and a custom build action.
@@ -24,7 +24,7 @@ fun jsonObjectOf(
     name: String = JSUtils.generateName(null),
     buildAction: JsonObject.Constructor.() -> JsonObject.Constructor
 ): IJO {
-    val constructor = JsonObject.Constructor().apply { buildAction() }
+    val constructor = JsonObject.Constructor().apply { this.buildAction() }
     return JsonObject.from(name, constructor.map)
 }
 
