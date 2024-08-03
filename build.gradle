@@ -20,9 +20,9 @@ publishing {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
+compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:deprecation"
+    options.compilerArgs << '-Xlint:deprecation'
 }
 
 java {
