@@ -22,7 +22,7 @@ abstract class AbstractJsonObject protected constructor(
     override val keys get() = this.map.keys
     override val values get() = this.map.values
 
-    override fun IO(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
+    override fun io(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> get(key: String): T? {

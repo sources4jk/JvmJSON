@@ -30,7 +30,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
 
 
     @NotNull
-    fun IO(charset: Charset = Charsets.UTF_8): JsonInputOutput
+    fun io(charset: Charset = Charsets.UTF_8): JsonInputOutput
 
     /**
      * Retrieves a value associated with the specified key.
