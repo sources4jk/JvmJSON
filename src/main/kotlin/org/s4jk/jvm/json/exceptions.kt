@@ -1,4 +1,4 @@
-package s4jk.jvm.json
+package org.s4jk.jvm.json
 
 class IllegalValueTypeException: Exception("JSON document cannot support this value type")
 

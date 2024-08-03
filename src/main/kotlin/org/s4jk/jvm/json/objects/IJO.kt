@@ -1,8 +1,8 @@
-package s4jk.jvm.json.objects
+package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import s4jk.jvm.json.io.JsonInputOutput
+import org.s4jk.jvm.json.io.JsonInputOutput
 import java.nio.charset.Charset
 
 /**
@@ -30,7 +30,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
 
 
     @NotNull
-    fun IO(charset: Charset = Charsets.UTF_8): JsonInputOutput
+    fun io(charset: Charset = Charsets.UTF_8): JsonInputOutput
 
     /**
      * Retrieves a value associated with the specified key.

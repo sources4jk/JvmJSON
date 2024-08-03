@@ -1,4 +1,4 @@
-package s4jk.jvm.json.io
+package org.s4jk.jvm.json.io
 
 import java.nio.charset.Charset
 

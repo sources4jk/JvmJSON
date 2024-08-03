@@ -1,9 +1,9 @@
-package s4jk.jvm.json.objects
+package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import s4jk.jvm.json.JSUtils
-import s4jk.jvm.json.JsonStringManager
+import org.s4jk.jvm.json.JSUtils
+import org.s4jk.jvm.json.JsonStringManager
 
 /**
  * Creates a [JsonObject] with an optional name and a custom build action.

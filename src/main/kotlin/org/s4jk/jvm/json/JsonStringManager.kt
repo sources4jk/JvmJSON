@@ -1,9 +1,9 @@
-package s4jk.jvm.json
+package org.s4jk.jvm.json
 
-import s4jk.jvm.json.objects.IJA
-import s4jk.jvm.json.objects.JsonArray
-import s4jk.jvm.json.objects.IJO
-import s4jk.jvm.json.objects.JsonObject
+import org.s4jk.jvm.json.objects.IJA
+import org.s4jk.jvm.json.objects.JsonArray
+import org.s4jk.jvm.json.objects.IJO
+import org.s4jk.jvm.json.objects.JsonObject
 
 object JsonStringManager {
 

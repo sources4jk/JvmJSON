@@ -1,8 +1,8 @@
-package s4jk.jvm.json.objects
+package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
-import s4jk.jvm.json.JsonStringManager
-import s4jk.jvm.json.io.JsonInputOutput
+import org.s4jk.jvm.json.JsonStringManager
+import org.s4jk.jvm.json.io.JsonInputOutput
 import java.nio.charset.Charset
 import java.util.*
 import java.util.function.Consumer
@@ -22,7 +22,7 @@ abstract class AbstractJsonObject protected constructor(
     override val keys get() = this.map.keys
     override val values get() = this.map.values
 
-    override fun IO(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
+    override fun io(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> get(key: String): T? {

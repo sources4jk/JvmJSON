@@ -1,4 +1,4 @@
-package s4jk.jvm.json
+package org.s4jk.jvm.json
 
 import kotlin.random.Random
 

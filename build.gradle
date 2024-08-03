@@ -1,14 +1,40 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'java'
+    id 'maven-publish'
 }
 
-version = '0.9.6'
+version = '1.0.0'
+group = "org.s4jk.jvm.json"
 
 repositories {
+    mavenLocal()
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
+java {
+    sourceCompatibility(JavaVersion.VERSION_11)
+    targetCompatibility(JavaVersion.VERSION_11)
+    withSourcesJar()
 }
 
 kotlin {
     jvmToolchain(11)
+}
+
+wrapper {
+    gradleVersion("8.2")
 }
