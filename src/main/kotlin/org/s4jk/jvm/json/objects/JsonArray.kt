@@ -1,6 +1,6 @@
-package s4jk.jvm.json.objects
+package org.s4jk.jvm.json.objects
 
-import s4jk.jvm.json.JsonStringManager
+import org.s4jk.jvm.json.JsonStringManager
 
 /**
  * Creates a [JsonArray] from the provided elements.

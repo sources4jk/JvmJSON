@@ -1,9 +1,9 @@
-package s4jk.jvm.json.io
+package org.s4jk.jvm.json.io
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import s4jk.jvm.json.objects.IJO
-import s4jk.jvm.json.objects.JsonObject
+import org.s4jk.jvm.json.objects.IJO
+import org.s4jk.jvm.json.objects.JsonObject
 import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
