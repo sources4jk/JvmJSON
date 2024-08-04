@@ -2,7 +2,6 @@ package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import java.io.Serializable
 
 /**
  * Interface representing a JSON-like array with customizable functionality.
@@ -10,19 +9,19 @@ import java.io.Serializable
  *
  * @property size The number of elements currently in the array.
  */
-interface IJA : MutableIterable<Any?>, Serializable {
+interface IJA : MutableIterable<ValueContainer<Any?>> {
 
     @get:NotNull
     val size: Int
 
     /**
-     * Retrieves the element at the specified index.
+     * Retrieves the element at the specified index in the array.
      *
      * @param index The index of the element to retrieve.
      * @return The element at the specified index, or null if the index is out of bounds.
      */
-    @Nullable
-    fun <T> get(@NotNull index: Int): T?
+    @NotNull
+    fun get(@NotNull index: Int): ValueContainer<Any?>
 
     /**
      * Adds an element to the end of the array.
@@ -30,7 +29,7 @@ interface IJA : MutableIterable<Any?>, Serializable {
      * @param element The element to add.
      * @return The added element.
      */
-    fun add(@Nullable element: Any?)
+    fun add(@Nullable element: Any?): Boolean
 
     /**
      * Adds an element at the specified index, shifting subsequent elements.
@@ -56,7 +55,7 @@ interface IJA : MutableIterable<Any?>, Serializable {
      * @return The removed element, or null if the index is out of bounds.
      */
     @Nullable
-    fun removeAt(@NotNull index: Int): Any?
+    fun removeAt(@NotNull index: Int): ValueContainer<Any?>
 
     /**
      * Finds the index of the first occurrence of the specified element.
@@ -91,8 +90,4 @@ interface IJA : MutableIterable<Any?>, Serializable {
      */
     @NotNull
     fun toString(@NotNull indent: Int): String
-
-    companion object Static {
-        private const val serialVersionUID: Long = 123L
-    }
 }

@@ -2,7 +2,7 @@ package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.s4jk.jvm.json.io.JsonInputOutput
+import org.s4jk.jvm.json.JsonInputOutput
 import java.nio.charset.Charset
 
 /**
@@ -14,21 +14,26 @@ import java.nio.charset.Charset
  * @property keys A set of keys contained in the object.
  * @property values A collection of values contained in the object.
  */
-interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
+interface IJO: MutableIterable<MutableMap.MutableEntry<String, ValueContainer<Any?>>> {
 
     @get:NotNull
     val name: String
 
     @get:NotNull
-    val entries: Set<Map.Entry<String, Any?>>
+    val entries: Set<Map.Entry<String, ValueContainer<Any?>>>
 
     @get:NotNull
     val keys: Set<String>
 
     @get:NotNull
-    val values: Collection<Any?>
+    val values: Collection<ValueContainer<Any?>>
 
-
+    /**
+     * Creates a JsonInputOutput object for reading from and writing to the JSON object.
+     *
+     * @param charset The character set to use for encoding. Defaults to UTF-8.
+     * @return A JsonInputOutput instance for handling input and output operations.
+     */
     @NotNull
     fun io(charset: Charset = Charsets.UTF_8): JsonInputOutput
 
@@ -36,12 +41,10 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
      * Retrieves a value associated with the specified key.
      *
      * @param key The key to look up in the JSON object.
-     * @return The value associated with the key, or null if the key is not found.
-     * @throws ClassCastException If the value associated with the key cannot be cast to the expected type.
+     * @return The value associated with the key.
      */
-    @Nullable
-    @Throws(ClassCastException::class)
-    fun <T> get(@NotNull key: String): T?
+    @NotNull
+    fun get(key: String): ValueContainer<Any?>
 
     /**
      * Retrieves a value associated with the specified key, or returns a default value if the key is not found.
@@ -49,11 +52,9 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
      * @param key The key to look up in the JSON object.
      * @param defaultValue The value to return if the key is not found. Can be null.
      * @return The value associated with the key, or the default value if the key is not found.
-     * @throws ClassCastException If the value associated with the key cannot be cast to the expected type.
      */
-    @Nullable
-    @Throws(ClassCastException::class)
-    fun <T> getOrDefault(@NotNull key: String, @Nullable defaultValue: T?): T?
+    @NotNull
+    fun getOrDefault(@NotNull key: String, @Nullable defaultValue: Any?): ValueContainer<Any?>
 
     /**
      * Sets a key-value pair in the JSON object.
@@ -70,7 +71,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, Any?>> {
      * @return The value that was associated with the key, or null if the key was not found.
      */
     @Nullable
-    fun remove(@NotNull key: String): Any?
+    fun remove(@NotNull key: String): ValueContainer<Any?>
 
     /**
      * Converts the JSON object to a compact string representation without indentation.

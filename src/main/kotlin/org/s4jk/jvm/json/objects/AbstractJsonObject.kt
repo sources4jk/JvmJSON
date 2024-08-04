@@ -1,8 +1,9 @@
 package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
+import org.s4jk.jvm.json.JsonInputOutput
 import org.s4jk.jvm.json.JsonStringManager
-import org.s4jk.jvm.json.io.JsonInputOutput
+import org.s4jk.jvm.json.JsonUtils
 import java.nio.charset.Charset
 import java.util.*
 import java.util.function.Consumer
@@ -15,7 +16,7 @@ import java.util.function.Consumer
  */
 abstract class AbstractJsonObject protected constructor(
     private val objectName: String,
-    private val map: MutableMap<String, Any?>
+    private val map: MutableMap<String, ValueContainer<Any?>>
 ): IJO {
     override val name get() = this.objectName
     override val entries get() = this.map.entries
@@ -24,22 +25,21 @@ abstract class AbstractJsonObject protected constructor(
 
     override fun io(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: String): T? {
-        return this.entries.find { it.key == key }?.value as T
+
+    override fun get(key: String): ValueContainer<Any?> {
+        return this.map[key] ?: ValueContainer.NULL
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> getOrDefault(key: String, defaultValue: T?): T? {
-        return this.map.getOrDefault(key, defaultValue) as T
+    override fun getOrDefault(key: String, defaultValue: Any?): ValueContainer<Any?> {
+        return this.map.getOrDefault(key, ValueContainer(JsonUtils.resolveJsonValue(defaultValue)))
     }
 
     override fun set(key: String, value: Any?) {
-        this.map[key] = value
+        this.map[key] = ValueContainer(JsonUtils.resolveJsonValue(value))
     }
 
-    override fun remove(key: String): Any? {
-        return this.map.remove(key)
+    override fun remove(key: String): ValueContainer<Any?> {
+        return this.map.remove(key) ?: ValueContainer.NULL
     }
 
     override fun toString(): String {
@@ -50,15 +50,15 @@ abstract class AbstractJsonObject protected constructor(
         return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
-    override fun forEach(action: Consumer<in MutableMap.MutableEntry<String, Any?>>?) {
+    override fun forEach(action: Consumer<in MutableMap.MutableEntry<String, ValueContainer<Any?>>>?) {
         return this.map.entries.forEach(action)
     }
 
-    override fun spliterator(): Spliterator<MutableMap.MutableEntry<String, Any?>> {
+    override fun spliterator(): Spliterator<MutableMap.MutableEntry<String, ValueContainer<Any?>>> {
         return this.map.entries.spliterator()
     }
 
-    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, Any?>> {
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, ValueContainer<Any?>>> {
         return this.map.entries.iterator()
     }
 }

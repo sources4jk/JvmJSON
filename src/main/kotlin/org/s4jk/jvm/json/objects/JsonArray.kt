@@ -24,7 +24,7 @@ fun jsonArrayOf(vararg elements: Any?): IJA {
  * @return An [IJA] instance representing the created [JsonArray].
  */
 fun Array<*>.toJsonArray(): IJA {
-    return jsonArrayOf(*this)
+    return JsonArray.from(this@toJsonArray)
 }
 
 /**
@@ -36,7 +36,7 @@ fun Array<*>.toJsonArray(): IJA {
  * @return An [IJA] instance representing the created [JsonArray].
  */
 fun List<*>.toJsonArray(): IJA {
-    return jsonArrayOf(*this.toTypedArray())
+    return JsonArray.from(this@toJsonArray)
 }
 
 /**
@@ -48,7 +48,7 @@ fun List<*>.toJsonArray(): IJA {
  * @return An [IJA] instance representing the parsed JSON data.
  */
 fun String.toJsonArray(): IJA {
-    return jsonArrayOf(this)
+    return JsonArray.from(this@toJsonArray)
 }
 
 /**
@@ -56,7 +56,7 @@ fun String.toJsonArray(): IJA {
  * This class provides methods for creating and manipulating JSON arrays from various data sources
  * such as arrays, lists, and JSON strings.
  */
-class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(list) {
+class JsonArray private constructor(list: MutableList<ValueContainer<Any?>>): AbstractJsonArray(list) {
 
     companion object Static {
 
@@ -78,7 +78,7 @@ class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(
          */
         @JvmStatic
         fun from(source: Array<*>): IJA {
-            return JsonArray(source.toMutableList())
+            return JsonArray(source.map { ValueContainer<Any?>(it) }.toMutableList())
         }
 
         /**
@@ -89,7 +89,7 @@ class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(
          */
         @JvmStatic
         fun from(source: List<*>): IJA {
-            return JsonArray(source.toMutableList())
+            return JsonArray(source.map { ValueContainer<Any?>(it) }.toMutableList())
         }
 
         /**
@@ -100,7 +100,7 @@ class JsonArray private constructor(list: MutableList<Any?>): AbstractJsonArray(
          */
         @JvmStatic
         fun from(source: IJA): IJA {
-            val array = create()
+            val array = this.create()
 
             source.forEachIndexed { index, element ->
                 array.add(index, element)

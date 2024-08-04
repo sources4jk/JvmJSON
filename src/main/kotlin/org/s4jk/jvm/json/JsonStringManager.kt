@@ -1,9 +1,6 @@
 package org.s4jk.jvm.json
 
-import org.s4jk.jvm.json.objects.IJA
-import org.s4jk.jvm.json.objects.JsonArray
-import org.s4jk.jvm.json.objects.IJO
-import org.s4jk.jvm.json.objects.JsonObject
+import org.s4jk.jvm.json.objects.*
 
 object JsonStringManager {
 
@@ -98,8 +95,9 @@ object JsonStringManager {
             is String -> "\"$value\""
             is JsonObject -> jsonObjectToString(value, indent, depth)
             is JsonArray -> jsonArrayToString(value, indent, depth)
+            is ValueContainer<*> -> valueToString(value.asAny(), indent, depth)
             null -> "null"
-            else -> throw IllegalValueTypeException()
+            else -> throw IllegalValueTypeException(value)
         }
     }
 

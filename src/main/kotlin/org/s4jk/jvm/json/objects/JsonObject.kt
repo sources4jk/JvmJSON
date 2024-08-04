@@ -2,7 +2,7 @@ package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.s4jk.jvm.json.JSUtils
+import org.s4jk.jvm.json.JsonUtils
 import org.s4jk.jvm.json.JsonStringManager
 
 /**
@@ -15,14 +15,15 @@ import org.s4jk.jvm.json.JsonStringManager
  *
  * This approach provides a concise and flexible way to construct JSON objects programmatically.
  *
- * @param name An optional name to associate with the [JsonObject]. Defaults to a generated name if null.
+ * @param name An optional name to associate with the [JsonObject]. Can be null.
  * @param buildAction A lambda function that configures the [JsonObject.Constructor]. The lambda is applied
  * to a new [JsonObject.Constructor] instance and should populate its map.
  * @return An [IJO] instance representing the created [JsonObject].
  */
+@NotNull
 fun jsonObjectOf(
-    name: String = JSUtils.generateName(null),
-    buildAction: JsonObject.Constructor.() -> JsonObject.Constructor
+    @Nullable name: String? = null,
+    @NotNull buildAction: JsonObject.Constructor.() -> JsonObject.Constructor
 ): IJO {
     val constructor = JsonObject.Constructor().apply { this.buildAction() }
     return JsonObject.from(name, constructor.map)
@@ -37,7 +38,8 @@ fun jsonObjectOf(
  * @param name An optional name to associate with the [JsonObject]. Can be null.
  * @return An [IJO] instance representing the created [JsonObject].
  */
-fun Map<*,*>.toJsonObject(name: String? = null): IJO {
+@NotNull
+fun Map<*,*>.toJsonObject(@Nullable name: String? = null): IJO {
     return JsonObject.from(name, this)
 }
 
@@ -50,7 +52,8 @@ fun Map<*,*>.toJsonObject(name: String? = null): IJO {
  * @param name An optional name to associate with the [JsonObject]. Can be null.
  * @return An [IJO] instance representing the parsed JSON data.
  */
-fun String.toJsonObject(name: String? = null): IJO {
+@NotNull
+fun String.toJsonObject(@Nullable name: String? = null): IJO {
     return JsonObject.from(name, this)
 }
 
@@ -61,14 +64,14 @@ fun String.toJsonObject(name: String? = null): IJO {
  */
 class JsonObject private constructor(
     @Nullable objectName: String?,
-    @NotNull map: MutableMap<String, Any?>
-): AbstractJsonObject(JSUtils.generateName(objectName), map) {
+    @NotNull map: MutableMap<String, ValueContainer<Any?>>
+): AbstractJsonObject(JsonUtils.generateName(objectName), map) {
 
     class Constructor {
-        internal val map: MutableMap<String, Any?> = mutableMapOf()
+        internal val map: MutableMap<String, ValueContainer<Any?>> = mutableMapOf()
 
         infix fun String.to(value: Any?): Constructor {
-            this@Constructor.map[this] = value
+            this@Constructor.map[this] = ValueContainer(JsonUtils.resolveJsonValue(value))
             return this@Constructor
         }
     }
@@ -88,7 +91,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun create(): IJO {
-            return create(null)
+            return this.create(null)
         }
 
         /**
@@ -100,16 +103,16 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: Map<*, *>): IJO {
-            val json = create(name)
-            source.forEach { (key, value) ->
-                json.set(key.toString(), value)
+            return this.create(name).apply {
+                source.forEach { (key, value) ->
+                    this.set(key.toString(), value)
+                }
             }
-            return json
         }
 
         @JvmStatic
         fun from(@NotNull source: Map<*, *>): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
 
         /**
@@ -121,16 +124,16 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: IJO): IJO {
-            val json = create(name)
-            source.entries.forEach { (key, value) ->
-                json.set(key, value)
+            return this.create(name).apply {
+                source.entries.forEach { (key, value) ->
+                    this.set(key, value)
+                }
             }
-            return json
         }
 
         @JvmStatic
         fun from(@NotNull source: IJO): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
 
         /**
@@ -147,7 +150,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun from(@NotNull source: String): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
     }
 }
