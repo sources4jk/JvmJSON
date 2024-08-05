@@ -1,12 +1,10 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'java'
     id 'maven-publish'
 }
 
-version = '1.0.4'
-group = "org.s4jk.jvm.json"
-
+version = '1.0.9'
+group = 'rg.s4jk.jvm.json'
 repositories {
     mavenLocal()
     mavenCentral()
@@ -20,27 +18,25 @@ publishing {
     }
 }
 
-java {
-    sourceCompatibility(JavaVersion.VERSION_11)
-    targetCompatibility(JavaVersion.VERSION_11)
-    withSourcesJar()
-    withJavadocJar()
-}
-
 kotlin {
     jvmToolchain(11)
 }
 
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-Xlint:deprecation'
-}
-
 compileKotlin {
     kotlinOptions.jvmTarget = '11'
+    kotlinOptions.freeCompilerArgs += ['-Xjsr305=strict']
+}
+
+tasks.withType(Jar).configureEach {
+    archiveClassifier.set('')
+}
+
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
 }
 
 wrapper {
-    gradleVersion("8.2")
+    gradleVersion('8.2')
 }
 

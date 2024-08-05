@@ -1,9 +1,7 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.s4jk.jvm.json.JsonInputOutput
-import java.nio.charset.Charset
 
 /**
  * Interface for representing JSON-like objects, enabling custom functionality through implementation.
@@ -27,15 +25,6 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
 
     @get:NotNull
     val values: Collection<JsonValue>
-
-    /**
-     * Creates a JsonInputOutput object for reading from and writing to the JSON object.
-     *
-     * @param charset The character set to use for encoding. Defaults to UTF-8.
-     * @return A JsonInputOutput instance for handling input and output operations.
-     */
-    @NotNull
-    fun io(charset: Charset = Charsets.UTF_8): JsonInputOutput
 
     /**
      * Retrieves a value associated with the specified key.
@@ -62,6 +51,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
      * @param key The key to set in the JSON object.
      * @param value The value to associate with the key. Can be null.
      */
+    @NotNull
     fun set(@NotNull key: String, @Nullable value: Any?)
 
     /**

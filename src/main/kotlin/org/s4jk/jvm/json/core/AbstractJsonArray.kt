@@ -1,4 +1,4 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
 import org.s4jk.jvm.json.JsonStringManager
 import java.util.*

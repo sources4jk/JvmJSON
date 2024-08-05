@@ -1,4 +1,4 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -40,7 +40,7 @@ class JsonValue(private val value: Any?) {
     @Throws(ClassCastException::class)
     fun asNullable(): Any? {
         if (this.value != null) {
-            throw IllegalValueTypeException("${value::class.java.simpleName} is not Null!")
+            throw IllegalArgumentException("${value::class.java.simpleName} is not Null!")
         }
 
         return value
@@ -71,8 +71,8 @@ class JsonValue(private val value: Any?) {
                 is Boolean -> JsonValue(value)
                 is IJO -> JsonValue(value)
                 is IJA -> JsonValue(value)
-                is JsonValue -> this.handle(value.asAny())
-                null -> this.Null
+                is JsonValue -> handle(value.asAny())
+                null -> Null
                 else -> throw IllegalValueTypeException(value)
             }
         }

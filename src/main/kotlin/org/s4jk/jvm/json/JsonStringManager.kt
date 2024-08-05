@@ -1,6 +1,6 @@
 package org.s4jk.jvm.json
 
-import org.s4jk.jvm.json.objects.*
+import org.s4jk.jvm.json.core.*
 
 object JsonStringManager {
 
@@ -142,10 +142,10 @@ object JsonStringManager {
                     }
 
                     index < length && source[index] == ',' -> index++
-                    else -> throw IllegalJsonStringParserException("Expected '}' or ',' at position $index")
+                    else -> throw IllegalJsonStringParsingException("Expected '}' or ',' at position $index")
                 }
             }
-            throw IllegalJsonStringParserException("Unexpected end of input")
+            throw IllegalJsonStringParsingException("Unexpected end of input")
         }
 
         fun parseArray(): IJA {
@@ -171,10 +171,10 @@ object JsonStringManager {
                     }
 
                     index < length && source[index] == ',' -> index++
-                    else -> throw IllegalJsonStringParserException("Expected ']' or ',' at position $index")
+                    else -> throw IllegalJsonStringParsingException("Expected ']' or ',' at position $index")
                 }
             }
-            throw IllegalJsonStringParserException("Unexpected end of input")
+            throw IllegalJsonStringParsingException("Unexpected end of input")
         }
 
         private fun parseString(): String {
@@ -186,7 +186,7 @@ object JsonStringManager {
             }
 
             if (index >= length) {
-                throw IllegalJsonStringParserException("Unterminated string at position $index")
+                throw IllegalJsonStringParsingException("Unterminated string at position $index")
             }
 
             val result = source.substring(start, index)
@@ -203,7 +203,7 @@ object JsonStringManager {
                 source.startsWith("null", index) -> this.parseNull()
                 source.startsWith("{", index) -> this.parseObject()
                 source.startsWith("[", index) -> this.parseArray()
-                else -> throw IllegalJsonStringParserException("Unexpected character at position $index")
+                else -> throw IllegalJsonStringParsingException("Unexpected character at position $index")
             }
         }
 
@@ -215,7 +215,7 @@ object JsonStringManager {
                 index += 5
                 false
             } else {
-                throw IllegalJsonStringParserException("Unexpected value at position $index")
+                throw IllegalJsonStringParsingException("Unexpected value at position $index")
             }
         }
 
@@ -224,7 +224,7 @@ object JsonStringManager {
                 index += 4
                 return null
             } else {
-                throw IllegalJsonStringParserException("Unexpected value at position $index")
+                throw IllegalJsonStringParsingException("Unexpected value at position $index")
             }
         }
 
@@ -236,12 +236,12 @@ object JsonStringManager {
             while (index < length && source[index] in "-0123456789.eE") {
                 when (source[index]) {
                     '.' -> {
-                        if (hasDecimalPoint) throw IllegalJsonStringParserException("Multiple decimal points in number at position $index")
+                        if (hasDecimalPoint) throw IllegalJsonStringParsingException("Multiple decimal points in number at position $index")
                         hasDecimalPoint = true
                     }
 
                     'e', 'E' -> {
-                        if (hasExponent) throw IllegalJsonStringParserException("Multiple exponents in number at position $index")
+                        if (hasExponent) throw IllegalJsonStringParsingException("Multiple exponents in number at position $index")
                         hasExponent = true
                     }
                 }
@@ -260,7 +260,7 @@ object JsonStringManager {
 
         private fun requireChar(expected: Char) {
             if (index >= length || source[index] != expected) {
-                throw IllegalJsonStringParserException("Expected '$expected' at position $index")
+                throw IllegalJsonStringParsingException("Expected '$expected' at position $index")
             }
             index++
         }

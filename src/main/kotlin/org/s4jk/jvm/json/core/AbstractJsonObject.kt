@@ -1,9 +1,7 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
-import org.s4jk.jvm.json.JsonInputOutput
 import org.s4jk.jvm.json.JsonStringManager
-import java.nio.charset.Charset
 import java.util.*
 import java.util.function.Consumer
 
@@ -21,9 +19,6 @@ abstract class AbstractJsonObject protected constructor(
     override val entries get() = this.map.entries
     override val keys get() = this.map.keys
     override val values get() = this.map.values
-
-    override fun io(charset: Charset): JsonInputOutput = JsonInputOutput(this, charset)
-
 
     override fun get(key: String): JsonValue {
         return this.map[key] ?: JsonValue.Null

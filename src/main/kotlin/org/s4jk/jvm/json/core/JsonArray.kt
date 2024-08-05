@@ -1,5 +1,6 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
+import org.jetbrains.annotations.NotNull
 import org.s4jk.jvm.json.JsonStringManager
 
 /**
@@ -11,6 +12,8 @@ import org.s4jk.jvm.json.JsonStringManager
  * @param elements The elements to include in the JSON array.
  * @return An [IJA] instance representing the created [JsonArray].
  */
+@NotNull
+@JvmSynthetic
 fun jsonArrayOf(vararg elements: Any?): IJA {
     return JsonArray.from(elements.toList())
 }
@@ -23,6 +26,8 @@ fun jsonArrayOf(vararg elements: Any?): IJA {
  *
  * @return An [IJA] instance representing the created [JsonArray].
  */
+@NotNull
+@JvmSynthetic
 fun Array<*>.toJsonArray(): IJA {
     return JsonArray.from(this@toJsonArray)
 }
@@ -35,6 +40,8 @@ fun Array<*>.toJsonArray(): IJA {
  *
  * @return An [IJA] instance representing the created [JsonArray].
  */
+@NotNull
+@JvmSynthetic
 fun List<*>.toJsonArray(): IJA {
     return JsonArray.from(this@toJsonArray)
 }
@@ -47,6 +54,8 @@ fun List<*>.toJsonArray(): IJA {
  *
  * @return An [IJA] instance representing the parsed JSON data.
  */
+@NotNull
+@JvmSynthetic
 fun String.toJsonArray(): IJA {
     return JsonArray.from(this@toJsonArray)
 }
@@ -100,7 +109,7 @@ class JsonArray private constructor(list: MutableList<JsonValue>): AbstractJsonA
          */
         @JvmStatic
         fun from(source: IJA): IJA {
-            val array = this.create()
+            val array = create()
 
             source.forEachIndexed { index, element ->
                 array.add(index, element)

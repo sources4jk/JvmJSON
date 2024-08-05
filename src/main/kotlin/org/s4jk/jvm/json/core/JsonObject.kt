@@ -1,9 +1,9 @@
-package org.s4jk.jvm.json.objects
+package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.s4jk.jvm.json.JsonUtils
 import org.s4jk.jvm.json.JsonStringManager
+import org.s4jk.jvm.json.JsonUtils
 
 /**
  * Creates a [JsonObject] with an optional name and a custom build action.
@@ -16,11 +16,12 @@ import org.s4jk.jvm.json.JsonStringManager
  * This approach provides a concise and flexible way to construct JSON objects programmatically.
  *
  * @param name An optional name to associate with the [JsonObject]. Can be null.
- * @param buildAction A lambda function that configures the [JsonObject.Constructor]. The lambda is applied
+ * @param [buildAction] A lambda function that configures the [JsonObject.Constructor]. The lambda is applied
  * to a new [JsonObject.Constructor] instance and should populate its map.
  * @return An [IJO] instance representing the created [JsonObject].
  */
 @NotNull
+@JvmSynthetic
 fun jsonObjectOf(@Nullable name: String? = null, @NotNull buildAction: JsonObject.Constructor.() -> Unit): IJO {
     val constructor = JsonObject.Constructor().apply { this.buildAction() }
     return JsonObject.from(name, constructor.map)
@@ -36,6 +37,7 @@ fun jsonObjectOf(@Nullable name: String? = null, @NotNull buildAction: JsonObjec
  * @return An [IJO] instance representing the created [JsonObject].
  */
 @NotNull
+@JvmSynthetic
 fun Map<*, *>.toJsonObject(@Nullable name: String? = null): IJO {
     return JsonObject.from(name, this)
 }
@@ -50,6 +52,7 @@ fun Map<*, *>.toJsonObject(@Nullable name: String? = null): IJO {
  * @return An [IJO] instance representing the parsed JSON data.
  */
 @NotNull
+@JvmSynthetic
 fun String.toJsonObject(@Nullable name: String? = null): IJO {
     return JsonObject.from(name, this)
 }
@@ -91,7 +94,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun create(): IJO {
-            return this.create(null)
+            return create(null)
         }
 
         /**
@@ -103,7 +106,7 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: Map<*, *>): IJO {
-            return this.create(name).apply {
+            return create(name).apply {
                 source.forEach { (key, value) ->
                     this.set(key.toString(), value)
                 }
@@ -112,7 +115,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun from(@NotNull source: Map<*, *>): IJO {
-            return this.from(null, source)
+            return from(null, source)
         }
 
         /**
@@ -124,7 +127,7 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: IJO): IJO {
-            return this.create(name).apply {
+            return create(name).apply {
                 source.entries.forEach { (key, value) ->
                     this.set(key, value)
                 }
@@ -133,7 +136,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun from(@NotNull source: IJO): IJO {
-            return this.from(null, source)
+            return from(null, source)
         }
 
         /**
@@ -150,7 +153,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun from(@NotNull source: String): IJO {
-            return this.from(null, source)
+            return from(null, source)
         }
     }
 }
