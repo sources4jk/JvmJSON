@@ -89,13 +89,12 @@ object JsonStringManager {
         }
     }
 
-    private fun valueToString(value: Any?, indent: Int, depth: Int): String {
-        return when (value) {
+    private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
+        return when (value.asAny()) {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
-            is JsonObject -> jsonObjectToString(value, indent, depth)
-            is JsonArray -> jsonArrayToString(value, indent, depth)
-            is ValueContainer<*> -> valueToString(value.asAny(), indent, depth)
+            is JsonObject -> jsonObjectToString(value.asObject(), indent, depth)
+            is JsonArray -> jsonArrayToString(value.asArray(), indent, depth)
             null -> "null"
             else -> throw IllegalValueTypeException(value)
         }

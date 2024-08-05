@@ -20,21 +20,27 @@ publishing {
     }
 }
 
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-Xlint:deprecation'
-}
-
 java {
     sourceCompatibility(JavaVersion.VERSION_11)
     targetCompatibility(JavaVersion.VERSION_11)
     withSourcesJar()
+    withJavadocJar()
 }
 
 kotlin {
     jvmToolchain(11)
 }
 
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '11'
+}
+
 wrapper {
     gradleVersion("8.2")
 }
+

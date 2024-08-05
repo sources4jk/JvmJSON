@@ -56,7 +56,7 @@ fun String.toJsonArray(): IJA {
  * This class provides methods for creating and manipulating JSON arrays from various data sources
  * such as arrays, lists, and JSON strings.
  */
-class JsonArray private constructor(list: MutableList<ValueContainer<Any?>>): AbstractJsonArray(list) {
+class JsonArray private constructor(list: MutableList<JsonValue>): AbstractJsonArray(list) {
 
     companion object Static {
 
@@ -78,7 +78,7 @@ class JsonArray private constructor(list: MutableList<ValueContainer<Any?>>): Ab
          */
         @JvmStatic
         fun from(source: Array<*>): IJA {
-            return JsonArray(source.map { ValueContainer<Any?>(it) }.toMutableList())
+            return JsonArray(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
         /**
@@ -89,7 +89,7 @@ class JsonArray private constructor(list: MutableList<ValueContainer<Any?>>): Ab
          */
         @JvmStatic
         fun from(source: List<*>): IJA {
-            return JsonArray(source.map { ValueContainer<Any?>(it) }.toMutableList())
+            return JsonArray(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
         /**

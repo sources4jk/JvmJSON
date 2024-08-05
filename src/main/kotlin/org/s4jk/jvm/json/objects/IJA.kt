@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable
  *
  * @property size The number of elements currently in the array.
  */
-interface IJA : MutableIterable<ValueContainer<Any?>> {
+interface IJA : MutableIterable<JsonValue> {
 
     @get:NotNull
     val size: Int
@@ -21,7 +21,7 @@ interface IJA : MutableIterable<ValueContainer<Any?>> {
      * @return The element at the specified index, or null if the index is out of bounds.
      */
     @NotNull
-    fun get(@NotNull index: Int): ValueContainer<Any?>
+    fun get(@NotNull index: Int): JsonValue
 
     /**
      * Adds an element to the end of the array.
@@ -55,7 +55,7 @@ interface IJA : MutableIterable<ValueContainer<Any?>> {
      * @return The removed element, or null if the index is out of bounds.
      */
     @Nullable
-    fun removeAt(@NotNull index: Int): ValueContainer<Any?>
+    fun removeAt(@NotNull index: Int): JsonValue
 
     /**
      * Finds the index of the first occurrence of the specified element.

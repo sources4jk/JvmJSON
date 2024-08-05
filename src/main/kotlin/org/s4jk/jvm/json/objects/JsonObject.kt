@@ -21,10 +21,7 @@ import org.s4jk.jvm.json.JsonStringManager
  * @return An [IJO] instance representing the created [JsonObject].
  */
 @NotNull
-fun jsonObjectOf(
-    @Nullable name: String? = null,
-    @NotNull buildAction: JsonObject.Constructor.() -> JsonObject.Constructor
-): IJO {
+fun jsonObjectOf(@Nullable name: String? = null, @NotNull buildAction: JsonObject.Constructor.() -> Unit): IJO {
     val constructor = JsonObject.Constructor().apply { this.buildAction() }
     return JsonObject.from(name, constructor.map)
 }
@@ -39,7 +36,7 @@ fun jsonObjectOf(
  * @return An [IJO] instance representing the created [JsonObject].
  */
 @NotNull
-fun Map<*,*>.toJsonObject(@Nullable name: String? = null): IJO {
+fun Map<*, *>.toJsonObject(@Nullable name: String? = null): IJO {
     return JsonObject.from(name, this)
 }
 
@@ -64,15 +61,18 @@ fun String.toJsonObject(@Nullable name: String? = null): IJO {
  */
 class JsonObject private constructor(
     @Nullable objectName: String?,
-    @NotNull map: MutableMap<String, ValueContainer<Any?>>
+    @NotNull map: MutableMap<String, JsonValue>
 ): AbstractJsonObject(JsonUtils.generateName(objectName), map) {
 
     class Constructor {
-        internal val map: MutableMap<String, ValueContainer<Any?>> = mutableMapOf()
+        internal val map: MutableMap<String, JsonValue> = mutableMapOf()
 
-        infix fun String.to(value: Any?): Constructor {
-            this@Constructor.map[this] = ValueContainer(JsonUtils.resolveJsonValue(value))
-            return this@Constructor
+        infix fun String.to(value: Any?) {
+            this@Constructor.map[this] = JsonValue.handle(value)
+        }
+
+        fun entry(key: String, value: Any?) {
+            this@Constructor.map[key] = JsonValue.handle(value)
         }
     }
 

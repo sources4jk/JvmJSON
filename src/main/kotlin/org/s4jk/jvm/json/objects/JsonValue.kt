@@ -2,13 +2,14 @@ package org.s4jk.jvm.json.objects
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.s4jk.jvm.json.IllegalValueTypeException
 
-class ValueContainer<T: Any?>(private val value: T) {
+class JsonValue(private val value: Any?) {
 
     @NotNull
     @Throws(ClassCastException::class)
     fun asString(): String {
-        return this.value.toString()
+        return this.value as String
     }
 
     @NotNull
@@ -38,7 +39,11 @@ class ValueContainer<T: Any?>(private val value: T) {
     @NotNull
     @Throws(ClassCastException::class)
     fun asNullable(): Any? {
-        return null
+        if (this.value != null) {
+            throw IllegalValueTypeException("${value::class.java.simpleName} is not Null!")
+        }
+
+        return value
     }
 
     @Nullable
@@ -52,6 +57,24 @@ class ValueContainer<T: Any?>(private val value: T) {
     }
 
     companion object Static {
-        val NULL = ValueContainer<Any?>(null)
+
+        @get:Nullable
+        @JvmStatic
+        val Null = JsonValue(null)
+
+        @NotNull
+        @JvmStatic
+        fun handle(value: Any?): JsonValue {
+            return when(value) {
+                is String -> JsonValue(value)
+                is Number -> JsonValue(value)
+                is Boolean -> JsonValue(value)
+                is IJO -> JsonValue(value)
+                is IJA -> JsonValue(value)
+                is JsonValue -> this.handle(value.asAny())
+                null -> this.Null
+                else -> throw IllegalValueTypeException(value)
+            }
+        }
     }
 }

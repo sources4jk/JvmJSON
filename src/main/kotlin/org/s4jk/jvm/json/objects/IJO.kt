@@ -14,19 +14,19 @@ import java.nio.charset.Charset
  * @property keys A set of keys contained in the object.
  * @property values A collection of values contained in the object.
  */
-interface IJO: MutableIterable<MutableMap.MutableEntry<String, ValueContainer<Any?>>> {
+interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
 
     @get:NotNull
     val name: String
 
     @get:NotNull
-    val entries: Set<Map.Entry<String, ValueContainer<Any?>>>
+    val entries: Set<Map.Entry<String, JsonValue>>
 
     @get:NotNull
     val keys: Set<String>
 
     @get:NotNull
-    val values: Collection<ValueContainer<Any?>>
+    val values: Collection<JsonValue>
 
     /**
      * Creates a JsonInputOutput object for reading from and writing to the JSON object.
@@ -44,7 +44,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, ValueContainer<An
      * @return The value associated with the key.
      */
     @NotNull
-    fun get(key: String): ValueContainer<Any?>
+    fun get(key: String): JsonValue
 
     /**
      * Retrieves a value associated with the specified key, or returns a default value if the key is not found.
@@ -54,7 +54,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, ValueContainer<An
      * @return The value associated with the key, or the default value if the key is not found.
      */
     @NotNull
-    fun getOrDefault(@NotNull key: String, @Nullable defaultValue: Any?): ValueContainer<Any?>
+    fun getOrDefault(@NotNull key: String, @Nullable defaultValue: Any?): JsonValue
 
     /**
      * Sets a key-value pair in the JSON object.
@@ -71,7 +71,7 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, ValueContainer<An
      * @return The value that was associated with the key, or null if the key was not found.
      */
     @Nullable
-    fun remove(@NotNull key: String): ValueContainer<Any?>
+    fun remove(@NotNull key: String): JsonValue
 
     /**
      * Converts the JSON object to a compact string representation without indentation.
