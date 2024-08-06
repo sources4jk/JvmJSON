@@ -28,7 +28,7 @@ object JsonStringManager {
                 }
 
                 append("\"${entry.key}\": ")
-                append(valueToString(value, indent, depth + 1))
+                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
                 if (index != json.entries.size - 1) {
                     append(", ")
@@ -48,7 +48,7 @@ object JsonStringManager {
     }
 
     @JvmStatic
-    fun jsonArrayToString(array: IJA, indent: Int, depth: Int): String {
+    fun jsonListToString(array: IJL, indent: Int, depth: Int): String {
         val spaces = " ".repeat(indent * depth)
 
         if (array.isEmpty()) {
@@ -69,8 +69,7 @@ object JsonStringManager {
                     append(spaces)
                 }
 
-                append(valueToString(value, indent, depth + 1))
-
+                append(this@JsonStringManager.valueToString(value.asAny(), indent, depth + 1))
 
                 if (index != array.size - 1) {
                     append(", ")
@@ -89,14 +88,14 @@ object JsonStringManager {
         }
     }
 
-    private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
-        return when (value.asAny()) {
+    private fun valueToString(value: Any?, indent: Int, depth: Int): String {
+        return when (value) {
             is Number, is Boolean -> value.toString()
             is String -> "\"$value\""
-            is JsonObject -> jsonObjectToString(value.asObject(), indent, depth)
-            is JsonArray -> jsonArrayToString(value.asArray(), indent, depth)
+            is JsonObject -> this.jsonObjectToString(value, indent, depth)
+            is JsonList -> this.jsonListToString(value, indent, depth)
             null -> "null"
-            else -> throw IllegalValueTypeException(value)
+            else -> throw IllegalJsonValueTypeException(value)
         }
     }
 
@@ -106,7 +105,7 @@ object JsonStringManager {
     }
 
     @JvmStatic
-    fun stringToJsonArray(source: String): IJA {
+    fun stringToJsonList(source: String): IJL {
         return StringParser("", source).parseArray()
     }
 
@@ -148,8 +147,8 @@ object JsonStringManager {
             throw IllegalJsonStringParsingException("Unexpected end of input")
         }
 
-        fun parseArray(): IJA {
-            val array = JsonArray.create()
+        fun parseArray(): IJL {
+            val array = JsonList.create()
             index++
             this.skipWhitespace()
 

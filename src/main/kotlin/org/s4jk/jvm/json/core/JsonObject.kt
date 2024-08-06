@@ -27,7 +27,7 @@ fun jsonObjectOf(@Nullable name: String? = null, @NotNull buildAction: JsonObjec
     return JsonObject.from(name, constructor.map)
 }
 
-/**
+/**τ♥
  * Converts a map into a [JsonObject].
  *
  * This function creates a [JsonObject] from a given map. The map's keys are used as the keys in the resulting
@@ -63,9 +63,9 @@ fun String.toJsonObject(@Nullable name: String? = null): IJO {
  * such as maps and JSON strings.
  */
 class JsonObject private constructor(
-    @Nullable objectName: String?,
+    @Nullable name: String?,
     @NotNull map: MutableMap<String, JsonValue>
-): AbstractJsonObject(JsonUtils.generateName(objectName), map) {
+): AbstractJsonObject(JsonUtils.generateName(name), map) {
 
     class Constructor {
         internal val map: MutableMap<String, JsonValue> = mutableMapOf()
@@ -74,9 +74,6 @@ class JsonObject private constructor(
             this@Constructor.map[this] = JsonValue.handle(value)
         }
 
-        fun entry(key: String, value: Any?) {
-            this@Constructor.map[key] = JsonValue.handle(value)
-        }
     }
 
     companion object Static {

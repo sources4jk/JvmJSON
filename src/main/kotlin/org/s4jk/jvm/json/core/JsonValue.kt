@@ -2,7 +2,7 @@ package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.s4jk.jvm.json.IllegalValueTypeException
+import org.s4jk.jvm.json.IllegalJsonValueTypeException
 
 class JsonValue(private val value: Any?) {
 
@@ -32,17 +32,16 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     @Throws(ClassCastException::class)
-    fun asArray(): IJA {
-        return this.value as IJA
+    fun asList(): IJL {
+        return this.value as IJL
     }
 
     @NotNull
-    @Throws(ClassCastException::class)
+    @Throws(IllegalArgumentException::class)
     fun asNullable(): Any? {
         if (this.value != null) {
             throw IllegalArgumentException("${value::class.java.simpleName} is not Null!")
         }
-
         return value
     }
 
@@ -53,7 +52,7 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     override fun toString(): String {
-        return this.value.toString()
+        return "JsonValue { ${this.value} }"
     }
 
     companion object Static {
@@ -70,10 +69,10 @@ class JsonValue(private val value: Any?) {
                 is Number -> JsonValue(value)
                 is Boolean -> JsonValue(value)
                 is IJO -> JsonValue(value)
-                is IJA -> JsonValue(value)
+                is IJL -> JsonValue(value)
                 is JsonValue -> handle(value.asAny())
-                null -> Null
-                else -> throw IllegalValueTypeException(value)
+                null -> this.Null
+                else -> throw IllegalJsonValueTypeException(value)
             }
         }
     }

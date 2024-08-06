@@ -7,12 +7,16 @@ import org.jetbrains.annotations.Nullable
  * Interface for representing JSON-like objects, enabling custom functionality through implementation.
  * Defines methods and properties for managing and interacting with objects consisting of key-value pairs.
  *
- * @property name A unique identifier or label for the object, used for distinguishing between instances or for descriptive purposes.
+ * @property size The count of key-value pairs in the JSON object.
+ * @property name The name of the file used for serializing the object.
  * @property entries A set of key-value pairs contained in the object.
  * @property keys A set of keys contained in the object.
  * @property values A collection of values contained in the object.
  */
-interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
+interface IJO {
+
+    @get:NotNull
+    val size: Int
 
     @get:NotNull
     val name: String
@@ -27,13 +31,39 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
     val values: Collection<JsonValue>
 
     /**
+     * Checks if the JSON object is empty (contains no key-value pairs).
+     *
+     * @return true if the JSON object is empty, false otherwise.
+     */
+    @NotNull
+    fun isEmpty(): Boolean
+
+    /**
+     * Checks if the JSON object contains the specified key.
+     *
+     * @param key The key to check for in the JSON object.
+     * @return true if the key is present, false otherwise.
+     */
+    @NotNull
+    fun containsKey(key: String): Boolean
+
+    /**
+     * Checks if the JSON object contains the specified value.
+     *
+     * @param value The value to check for in the JSON object.
+     * @return true if the value is present, false otherwise.
+     */
+    @NotNull
+    fun containsValue(value: Any?): Boolean
+
+    /**
      * Retrieves a value associated with the specified key.
      *
      * @param key The key to look up in the JSON object.
      * @return The value associated with the key.
      */
     @NotNull
-    fun get(key: String): JsonValue
+    operator fun get(key: String): JsonValue
 
     /**
      * Retrieves a value associated with the specified key, or returns a default value if the key is not found.
@@ -50,9 +80,18 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
      *
      * @param key The key to set in the JSON object.
      * @param value The value to associate with the key. Can be null.
+     * @return The previous value associated with the key, or null if there was no value.
      */
     @NotNull
-    fun set(@NotNull key: String, @Nullable value: Any?)
+    operator fun set(@NotNull key: String, @Nullable value: Any?): JsonValue?
+
+    /**
+     * Copies all key-value pairs from the source JSON object into this JSON object.
+     *
+     * @param from The source JSON object to copy key-value pairs from.
+     */
+    @NotNull
+    fun setAll(from: IJO)
 
     /**
      * Removes a key-value pair from the JSON object.
@@ -61,7 +100,12 @@ interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
      * @return The value that was associated with the key, or null if the key was not found.
      */
     @Nullable
-    fun remove(@NotNull key: String): JsonValue
+    fun remove(@NotNull key: String): JsonValue?
+
+    /**
+     * Removes all key-value pairs from the JSON object.
+     */
+    fun clear()
 
     /**
      * Converts the JSON object to a compact string representation without indentation.
