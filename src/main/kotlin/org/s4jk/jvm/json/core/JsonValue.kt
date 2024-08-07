@@ -65,14 +65,30 @@ class JsonValue(private val value: Any?) {
         @JvmStatic
         fun handle(value: Any?): JsonValue {
             return when(value) {
-                is String -> JsonValue(value)
-                is Number -> JsonValue(value)
-                is Boolean -> JsonValue(value)
-                is IJO -> JsonValue(value)
-                is IJL -> JsonValue(value)
-                is JsonValue -> handle(value.asAny())
-                null -> this.Null
-                else -> throw IllegalJsonValueTypeException(value)
+                is String -> {
+                    JsonValue(value)
+                }
+                is Number -> {
+                    JsonValue(value)
+                }
+                is Boolean -> {
+                    JsonValue(value)
+                }
+                is IJO -> {
+                    JsonValue(value)
+                }
+                is IJL -> {
+                    JsonValue(value)
+                }
+                is JsonValue -> {
+                    this.handle(value.asAny())
+                }
+                null -> {
+                    this.Null
+                }
+                else -> {
+                    throw IllegalJsonValueTypeException(value)
+                }
             }
         }
     }

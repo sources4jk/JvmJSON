@@ -8,8 +8,8 @@ import java.util.function.Consumer
 /**z
  * Abstract base class for [IJO], providing default implementations for common operations.
  *
- * @property [jsonName] The name associated with this JSON object.
- * @property [map] A mutable map holding the key-value pairs for the JSON object.
+ * @property jsonName The name of the file used for serializing the object.
+ * @property map A mutable map holding the key-value pairs for the JSON object.
  */
 abstract class AbstractJsonObject protected constructor(
     private val jsonName: String,
