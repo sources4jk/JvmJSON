@@ -9,7 +9,7 @@ import org.s4jk.jvm.json.JsonStringManager
  * This function enables the creation of a [JsonList] by specifying a variable number of elements. The elements
  * are converted into a list and then used to construct a [JsonList].
  *
- * @param elements The elements to include in the JSON array.
+ * @param elements The elements to include in the JSON list.
  * @return An [IJL] instance representing the created [JsonList].
  */
 @NotNull
@@ -19,10 +19,10 @@ fun jsonListOf(vararg elements: Any?): IJL {
 }
 
 /**
- * Converts an array into a [JsonList].
+ * Converts array into a [JsonList].
  *
- * This extension function creates a [JsonList] from the elements of the array. The array elements are converted
- * into a list and used to construct the [JsonList].
+ * This extension function creates a [JsonList] from the elements of the list. The set elements are converted
+ * into a set and used to construct the [JsonList].
  *
  * @return An [IJL] instance representing the created [JsonList].
  */
@@ -47,6 +47,20 @@ fun List<*>.toJsonList(): IJL {
 }
 
 /**
+ * Converts a set into a [JsonList].
+ *
+ * This extension function creates a [JsonList] from the elements of the set. The set elements are used directly
+ * to construct the [JsonList].
+ *
+ * @return An [IJL] instance representing the created [JsonList].
+ */
+@NotNull
+@JvmSynthetic
+fun Set<*>.toJsonList(): IJL {
+    return JsonList.from(this@toJsonList)
+}
+
+/**
  * Converts a JSON string into a [JsonList].
  *
  * This extension function parses a JSON-formatted string into a [JsonList]. The resulting [JsonList] contains
@@ -62,8 +76,8 @@ fun String.toJsonList(): IJL {
 
 /**
  * Concrete implementation of [IJL], extending [AbstractJsonList].
- * This class provides methods for creating and manipulating JSON arrays from various data sources
- * such as arrays, lists, and JSON strings.
+ * This class provides methods for creating and manipulating JSON lists from various data sources
+ * such as lists, lists, and JSON strings.
  */
 class JsonList private constructor(list: MutableList<JsonValue>): AbstractJsonList(list) {
 
@@ -80,9 +94,9 @@ class JsonList private constructor(list: MutableList<JsonValue>): AbstractJsonLi
         }
 
         /**
-         * Creates a [JsonList] from an existing array.
+         * Creates a [JsonList] from an existing list.
          *
-         * @param source The source array to convert into a [JsonList].
+         * @param source The source list to convert into a [JsonList].
          * @return A new [JsonList] instance containing the elements from the source array.
          */
         @JvmStatic
@@ -102,20 +116,31 @@ class JsonList private constructor(list: MutableList<JsonValue>): AbstractJsonLi
         }
 
         /**
-         * Creates a [JsonList] from another [IJL] instance.
+         * Creates a [JsonList] from an existing set.
+         *
+         * @param source The source set to convert into a [JsonList].
+         * @return A new [JsonList] instance containing the elements from the source list.
+         */
+        @JvmStatic
+        fun from(source: Set<*>): IJL {
+            return JsonList(source.map { JsonValue.handle(it) }.toMutableList())
+        }
+
+        /**
+         * Creates a [JsonList] from another [IJL].
          *
          * @param source The source [IJL] instance to convert.
          * @return A new [JsonList] instance containing the elements from the source [IJL].
          */
         @JvmStatic
         fun from(source: IJL): IJL {
-            val array = this.create()
+            val list = this.create()
 
             source.forEachIndexed { index, element ->
-                array.add(index, element)
+                list.add(index, element)
             }
 
-            return array
+            return list
         }
 
         /**

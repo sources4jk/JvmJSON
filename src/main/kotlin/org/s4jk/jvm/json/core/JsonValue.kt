@@ -52,7 +52,7 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     override fun toString(): String {
-        return "JsonValue { ${this.value} }"
+        return "Value={ ${this.value} }"
     }
 
     companion object Static {

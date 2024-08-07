@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable
  * @property keys A set of keys contained in the object.
  * @property values A collection of values contained in the object.
  */
-interface IJO {
+interface IJO: MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
 
     @get:NotNull
     val size: Int

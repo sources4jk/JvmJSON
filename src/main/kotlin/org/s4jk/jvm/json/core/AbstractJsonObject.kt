@@ -2,6 +2,8 @@ package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
 import org.s4jk.jvm.json.JsonStringManager
+import java.util.Spliterator
+import java.util.function.Consumer
 
 /**z
  * Abstract base class for [IJO], providing default implementations for common operations.
@@ -61,5 +63,17 @@ abstract class AbstractJsonObject protected constructor(
 
     override fun toString(@NotNull indent: Int): String {
         return JsonStringManager.jsonObjectToString(this, indent, 1)
+    }
+
+    override fun forEach(action: Consumer<in MutableMap.MutableEntry<String, JsonValue>>?) {
+        return this.entries.forEach(action)
+    }
+
+    override fun spliterator(): Spliterator<MutableMap.MutableEntry<String, JsonValue>> {
+        return this.entries.spliterator()
+    }
+
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, JsonValue>> {
+        return this.entries.iterator()
     }
 }

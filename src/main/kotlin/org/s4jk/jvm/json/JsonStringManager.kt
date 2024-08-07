@@ -69,7 +69,7 @@ object JsonStringManager {
                     append(spaces)
                 }
 
-                append(this@JsonStringManager.valueToString(value.asAny(), indent, depth + 1))
+                append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
                 if (index != array.size - 1) {
                     append(", ")
@@ -88,14 +88,29 @@ object JsonStringManager {
         }
     }
 
-    private fun valueToString(value: Any?, indent: Int, depth: Int): String {
-        return when (value) {
-            is Number, is Boolean -> value.toString()
-            is String -> "\"$value\""
-            is JsonObject -> this.jsonObjectToString(value, indent, depth)
-            is JsonList -> this.jsonListToString(value, indent, depth)
-            null -> "null"
-            else -> throw IllegalJsonValueTypeException(value)
+    private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
+        return when (value.asAny()) {
+            is Number -> {
+                value.asNumber().toString()
+            }
+            is Boolean -> {
+                value.asBoolean().toString()
+            }
+            is String -> {
+                "\"${value.asString()}\""
+            }
+            is JsonObject -> {
+                this.jsonObjectToString(value.asObject(), indent, depth)
+            }
+            is JsonList -> {
+                this.jsonListToString(value.asList(), indent, depth)
+            }
+            null -> {
+                "null"
+            }
+            else -> {
+                throw IllegalJsonValueTypeException(value)
+            }
         }
     }
 

@@ -103,16 +103,16 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: Map<*, *>): IJO {
-            return create(name).apply {
+            return this.create(name).apply {
                 source.forEach { (key, value) ->
-                    this.set(key.toString(), value)
+                    this[key.toString()] = JsonValue.handle(value)
                 }
             }
         }
 
         @JvmStatic
         fun from(@NotNull source: Map<*, *>): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
 
         /**
@@ -124,16 +124,16 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: IJO): IJO {
-            return create(name).apply {
+            return this.create(name).apply {
                 source.entries.forEach { (key, value) ->
-                    this.set(key, value)
+                    this[key] = JsonValue.handle(value)
                 }
             }
         }
 
         @JvmStatic
         fun from(@NotNull source: IJO): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
 
         /**
@@ -150,7 +150,7 @@ class JsonObject private constructor(
 
         @JvmStatic
         fun from(@NotNull source: String): IJO {
-            return from(null, source)
+            return this.from(null, source)
         }
     }
 }
