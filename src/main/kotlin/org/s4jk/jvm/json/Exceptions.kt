@@ -24,6 +24,6 @@ fun main() {
         }
     }
 
-//    println(json.toString(0))
+    println(json.toString(4))
 
 }

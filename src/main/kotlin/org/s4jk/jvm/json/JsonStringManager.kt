@@ -9,31 +9,31 @@ import org.s4jk.jvm.json.core.JsonValue
 
 object JsonStringManager {
 
+    private val spaces: (Int, Int) -> String = { indent, depth -> if (indent > 0) " ".repeat(indent * depth) else " " }
+    private val tabs: (Int) -> String = { indent -> if(indent > 0) "\n" else "" }
+
+
     @JvmStatic
     fun jsonObjectToString(json: IJO, indent: Int, depth: Int): String {
         if (json.isEmpty()) {
             return "{}"
         }
 
-        val spaces: (Int) -> String = { if (indent > 0) " ".repeat(indent * it) else " " }
-        val tab = if (indent > 0) "\n" else ""
-
         return buildString {
-            append("{").append(tab)
+            append("{").append(this@JsonStringManager.tabs(indent))
 
             json.entries.forEachIndexed { index, (key, value) ->
 
-                append(spaces(depth))
+                append(this@JsonStringManager.spaces(indent, depth))
                 append("\"${key}\": ").append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
                 if (index != json.entries.size - 1) {
                     append(",")
                 }
 
-                append(tab)
-
+                append(this@JsonStringManager.tabs(indent))
             }
-            append(spaces(depth - 1)).append("}")
+            append(this@JsonStringManager.spaces(indent, depth - 1)).append("}")
         }
     }
 
@@ -43,24 +43,21 @@ object JsonStringManager {
             return "[]"
         }
 
-        val spaces: (Int) -> String = { if (indent > 0) " ".repeat(indent * it) else "" }
-        val tab = if (indent > 0) "\n" else ""
-
         return buildString {
-            append("[").append(tab)
+            append("[").append(this@JsonStringManager.tabs(indent))
 
             list.forEachIndexed { index, value ->
 
-                append(spaces(depth)).append(this@JsonStringManager.valueToString(value, indent, depth + 1))
+                append(this@JsonStringManager.spaces(indent, depth)).append(this@JsonStringManager.valueToString(value, indent, depth + 1))
 
                 if (index != list.size - 1) {
-                    append(", ")
+                    append(",")
                 }
 
-                append(tab)
+                append(this@JsonStringManager.tabs(indent))
 
             }
-            append(spaces(depth - 1)).append("]")
+            append(this@JsonStringManager.spaces(indent, depth -1 )).append("]")
         }
     }
 
