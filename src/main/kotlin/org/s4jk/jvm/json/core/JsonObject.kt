@@ -103,11 +103,9 @@ class JsonObject private constructor(
          */
         @JvmStatic
         fun from(@Nullable name: String?, @NotNull source: Map<*, *>): IJO {
-            return this.create(name).apply {
-                source.forEach { (key, value) ->
-                    this[key.toString()] = JsonValue.handle(value)
-                }
-            }
+            return JsonObject(name, source.map { (key, value) ->
+                key.toString() to JsonValue.handle(value)
+            }.toMap().toMutableMap())
         }
 
         @JvmStatic

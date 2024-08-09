@@ -71,7 +71,7 @@ object JsonStringManager {
                 value.asBoolean().toString()
             }
 
-            is String -> {
+            is String-> {
                 "\"${value.asString()}\""
             }
 
