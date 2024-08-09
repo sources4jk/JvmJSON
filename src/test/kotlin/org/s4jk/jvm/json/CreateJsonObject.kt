@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 class CreateJsonObject {
 
-    private val sample = jsonObjectOf("jsonFromData") {
+    private val sample = jsonObjectOf {
         "null_key_1" to null
         "number_key_1" to 123456789
         "number_key_2" to -123456789
@@ -18,7 +18,6 @@ class CreateJsonObject {
         "object_key_1" to jsonObjectOf { "key1" to 123456789 }
         "list_key_1" to jsonListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
     }
-
 
     @Test
     fun createFromUserData() {
@@ -59,7 +58,7 @@ class CreateJsonObject {
             "boolen_key_2" to false,
             "object_key_1" to jsonObjectOf { "key1" to 123456789 },
             "list_key_1" to jsonListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
-        ).toJsonObject("JsonPbjectFromMap")
+        ).toJsonObject()
 
         assertEquals(map["null_key_1"].asNull(), this.sample["null_key_1"].asNull())
         assertEquals(map["number_key_1"].asInt(), this.sample["number_key_1"].asInt())
@@ -113,7 +112,7 @@ class CreateJsonObject {
         }
         """.trimIndent()
 
-        val json = str.toJsonObject("jsonFromString")
+        val json = str.toJsonObject()
 
         assertEquals(json["null_key_1"].asNull(), this.sample["null_key_1"].asNull())
         assertEquals(json["number_key_1"].asInt(), this.sample["number_key_1"].asInt())
