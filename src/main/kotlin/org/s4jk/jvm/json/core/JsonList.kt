@@ -1,156 +1,134 @@
 package org.s4jk.jvm.json.core
 
-import org.jetbrains.annotations.NotNull
 import org.s4jk.jvm.json.JsonStringManager
+import java.util.Spliterator
+import java.util.function.Consumer
 
-/**
- * Creates a [JsonList] from the provided elements.
- *
- * This function enables the creation of a [JsonList] by specifying a variable number of elements. The elements
- * are converted into a list and then used to construct a [JsonList].
- *
- * @param elements The elements to include in the JSON list.
- * @return An [IJL] instance representing the created [JsonList].
- */
-@NotNull
-@JvmSynthetic
-fun jsonListOf(vararg elements: Any?): IJL {
-    return JsonList.from(elements.toList())
-}
+class JsonList private constructor(private val list: MutableList<JsonValue>): MutableIterable<JsonValue> {
 
-/**
- * Converts array into a [JsonList].
- *
- * This extension function creates a [JsonList] from the elements of the list. The set elements are converted
- * into a set and used to construct the [JsonList].
- *
- * @return An [IJL] instance representing the created [JsonList].
- */
-@NotNull
-@JvmSynthetic
-fun Array<*>.toJsonList(): IJL {
-    return JsonList.from(this@toJsonList)
-}
+    val size get() = this.list.size
 
-/**
- * Converts a list into a [JsonList].
- *
- * This extension function creates a [JsonList] from the elements of the list. The list elements are used directly
- * to construct the [JsonList].
- *
- * @return An [IJL] instance representing the created [JsonList].
- */
-@NotNull
-@JvmSynthetic
-fun List<*>.toJsonList(): IJL {
-    return JsonList.from(this@toJsonList)
-}
+    fun isEmpty(): Boolean {
+        return this.list.isEmpty()
+    }
 
-/**
- * Converts a set into a [JsonList].
- *
- * This extension function creates a [JsonList] from the elements of the set. The set elements are used directly
- * to construct the [JsonList].
- *
- * @return An [IJL] instance representing the created [JsonList].
- */
-@NotNull
-@JvmSynthetic
-fun Set<*>.toJsonList(): IJL {
-    return JsonList.from(this@toJsonList)
-}
+    fun contains(element: Any?): Boolean {
+        return this.list.contains(JsonValue.handle(element))
+    }
 
-/**
- * Converts a JSON string into a [JsonList].
- *
- * This extension function parses a JSON-formatted string into a [JsonList]. The resulting [JsonList] contains
- * the data represented by the JSON string.
- *
- * @return An [IJL] instance representing the parsed JSON data.
- */
-@NotNull
-@JvmSynthetic
-fun String.toJsonList(): IJL {
-    return JsonList.from(this@toJsonList)
-}
+    fun containsAll(elements: Collection<Any?>): Boolean {
+        return this.list.containsAll(elements.map { JsonValue.handle(it) })
+    }
 
-/**
- * Concrete implementation of [IJL], extending [AbstractJsonList].
- * This class provides methods for creating and manipulating JSON lists from various data sources
- * such as lists, lists, and JSON strings.
- */
-class JsonList private constructor(list: MutableList<JsonValue>): AbstractJsonList(list) {
+    operator fun get(index: Int): JsonValue {
+        return this.list[index]
+    }
+
+    fun indexOf(element: Any?): Int {
+        return this.list.indexOf(JsonValue.handle(element))
+    }
+
+    fun lastIndexOf(element: Any?): Int {
+        return this.list.lastIndexOf(JsonValue.handle(element))
+    }
+
+    fun listIterator(): ListIterator<JsonValue> {
+        return this.list.listIterator()
+    }
+
+    fun listIterator(index: Int): ListIterator<JsonValue> {
+        return this.list.listIterator(index)
+    }
+
+    fun sub(from: Int, to: Int): JsonList {
+        return from(this.list.subList(from, to))
+    }
+
+    fun add(element: Any?): Boolean {
+        return this.list.add(JsonValue.handle(element))
+    }
+
+    fun add(index: Int, element: Any?) {
+        return this.list.add(index, JsonValue.handle(element))
+    }
+
+    fun addAll(elements: Collection<Any?>): Boolean {
+        return this.list.addAll(elements.map { JsonValue.handle(it) })
+    }
+
+    fun addAll(index: Int, elements: Collection<Any?>): Boolean {
+        return this.list.addAll(index, elements.map { JsonValue.handle(it) })
+    }
+
+    fun remove(element: Any?): Boolean {
+        return this.list.remove(JsonValue.handle(element))
+    }
+
+    fun removeAt(index: Int): JsonValue {
+        return this.list.removeAt(index)
+    }
+
+    fun removeAll(elements: Collection<Any?>): Boolean {
+        return this.list.removeAll(elements.map { JsonValue.handle(it) })
+    }
+
+    fun retainAll(elements: Collection<Any?>): Boolean {
+        return this.list.retainAll(elements.map { JsonValue.handle(it) })
+    }
+
+    fun clear() {
+        return this.list.clear()
+    }
+
+    override fun toString(): String {
+        return JsonStringManager.jsonListToString(this, 0, 1)
+    }
+
+    fun toString(indent: Int): String {
+        return JsonStringManager.jsonListToString(this, indent, 1)
+    }
+
+    override fun forEach(action: Consumer<in JsonValue>?) {
+        return this.list.forEach(action)
+    }
+
+    override fun spliterator(): Spliterator<JsonValue> {
+        return this.list.spliterator()
+    }
+
+    override fun iterator(): MutableIterator<JsonValue> {
+        return this.list.iterator()
+    }
 
     companion object Static {
 
-        /**
-         * Creates an empty [JsonList].
-         *
-         * @return A new [JsonList] instance with an empty list.
-         */
         @JvmStatic
-        fun create(): IJL {
+        fun create(): JsonList {
             return JsonList(mutableListOf())
         }
 
-        /**
-         * Creates a [JsonList] from an existing list.
-         *
-         * @param source The source list to convert into a [JsonList].
-         * @return A new [JsonList] instance containing the elements from the source array.
-         */
         @JvmStatic
-        fun from(source: Array<*>): IJL {
+        fun from(source: Array<*>): JsonList {
             return JsonList(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
-        /**
-         * Creates a [JsonList] from an existing list.
-         *
-         * @param source The source list to convert into a [JsonList].
-         * @return A new [JsonList] instance containing the elements from the source list.
-         */
         @JvmStatic
-        fun from(source: List<*>): IJL {
+        fun from(source: List<*>): JsonList {
             return JsonList(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
-        /**
-         * Creates a [JsonList] from an existing set.
-         *
-         * @param source The source set to convert into a [JsonList].
-         * @return A new [JsonList] instance containing the elements from the source list.
-         */
         @JvmStatic
-        fun from(source: Set<*>): IJL {
+        fun from(source: Set<*>): JsonList {
             return JsonList(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
-        /**
-         * Creates a [JsonList] from another [IJL].
-         *
-         * @param source The source [IJL] instance to convert.
-         * @return A new [JsonList] instance containing the elements from the source [IJL].
-         */
         @JvmStatic
-        fun from(source: IJL): IJL {
-            val list = this.create()
-
-            source.forEachIndexed { index, element ->
-                list.add(index, element)
-            }
-
-            return list
+        fun from(source: JsonList): JsonList {
+            return JsonList(source.map { JsonValue.handle(it) }.toMutableList())
         }
 
-        /**
-         * Parses a JSON string into a [JsonList].
-         *
-         * @param source The JSON string to parse into a [JsonList].
-         * @return A new [JsonList] instance representing the parsed JSON data.
-         */
         @JvmStatic
-        fun from(source: String): IJL {
+        fun from(source: String): JsonList {
             return JsonStringManager.stringToJsonList(source)
         }
     }

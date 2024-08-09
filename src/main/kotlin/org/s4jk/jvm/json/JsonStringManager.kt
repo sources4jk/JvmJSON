@@ -1,7 +1,5 @@
 package org.s4jk.jvm.json
 
-import org.s4jk.jvm.json.core.IJL
-import org.s4jk.jvm.json.core.IJO
 import org.s4jk.jvm.json.core.JsonList
 import org.s4jk.jvm.json.core.JsonObject
 import org.s4jk.jvm.json.core.JsonValue
@@ -10,11 +8,11 @@ import org.s4jk.jvm.json.core.JsonValue
 object JsonStringManager {
 
     private val spaces: (Int, Int) -> String = { indent, depth -> if (indent > 0) " ".repeat(indent * depth) else " " }
-    private val tabs: (Int) -> String = { indent -> if(indent > 0) "\n" else "" }
+    private val tabs: (Int) -> String = { indent -> if (indent > 0) "\n" else "" }
 
 
     @JvmStatic
-    fun jsonObjectToString(json: IJO, indent: Int, depth: Int): String {
+    fun jsonObjectToString(json: JsonObject, indent: Int, depth: Int): String {
         if (json.isEmpty()) {
             return "{}"
         }
@@ -38,7 +36,7 @@ object JsonStringManager {
     }
 
     @JvmStatic
-    fun jsonListToString(list: IJL, indent: Int, depth: Int): String {
+    fun jsonListToString(list: JsonList, indent: Int, depth: Int): String {
         if (list.isEmpty()) {
             return "[]"
         }
@@ -48,7 +46,13 @@ object JsonStringManager {
 
             list.forEachIndexed { index, value ->
 
-                append(this@JsonStringManager.spaces(indent, depth)).append(this@JsonStringManager.valueToString(value, indent, depth + 1))
+                append(this@JsonStringManager.spaces(indent, depth)).append(
+                    this@JsonStringManager.valueToString(
+                        value,
+                        indent,
+                        depth + 1
+                    )
+                )
 
                 if (index != list.size - 1) {
                     append(",")
@@ -57,13 +61,13 @@ object JsonStringManager {
                 append(this@JsonStringManager.tabs(indent))
 
             }
-            append(this@JsonStringManager.spaces(indent, depth -1 )).append("]")
+            append(this@JsonStringManager.spaces(indent, depth - 1)).append("]")
         }
     }
 
     private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
         return when (value.asAny()) {
-            is Number -> {
+            is Byte, is Int, is Double, is Long -> {
                 value.asNumber().toString()
             }
 
@@ -71,7 +75,7 @@ object JsonStringManager {
                 value.asBoolean().toString()
             }
 
-            is String-> {
+            is String -> {
                 "\"${value.asString()}\""
             }
 
@@ -94,12 +98,12 @@ object JsonStringManager {
     }
 
     @JvmStatic
-    fun stringToJsonObject(name: String?, source: String): IJO {
+    fun stringToJsonObject(name: String?, source: String): JsonObject {
         return StringParser(name, source).parseObject()
     }
 
     @JvmStatic
-    fun stringToJsonList(source: String): IJL {
+    fun stringToJsonList(source: String): JsonList {
         return StringParser("", source).parseList()
     }
 
@@ -107,10 +111,10 @@ object JsonStringManager {
         private var index = 0
         private val length = source.length
 
-        fun parseObject(): IJO {
+        fun parseObject(): JsonObject {
             val json = JsonObject.create(name)
             this.index++
-            this.skipWhitespace()
+            this.skipWhitespaces()
 
             if (this.index < length && source[this.index] == '}') {
                 this.index++
@@ -118,15 +122,15 @@ object JsonStringManager {
             }
 
             while (this.index < length) {
-                this.skipWhitespace()
+                this.skipWhitespaces()
                 val key = this.parseString()
 
-                this.skipWhitespace()
+                this.skipWhitespaces()
                 this.requireChar(':')
 
                 val value = this.parseValue()
                 json[key] = value
-                this.skipWhitespace()
+                this.skipWhitespaces()
 
                 when {
                     this.index < length && source[this.index] == '}' -> {
@@ -141,10 +145,10 @@ object JsonStringManager {
             throw IllegalJsonStringParsingException("Unexpected end of input")
         }
 
-        fun parseList(): IJL {
+        fun parseList(): JsonList {
             val array = JsonList.create()
             this.index++
-            this.skipWhitespace()
+            this.skipWhitespaces()
 
             if (this.index < length && source[this.index] == ']') {
                 this.index++
@@ -152,11 +156,11 @@ object JsonStringManager {
             }
 
             while (this.index < length) {
-                this.skipWhitespace()
+                this.skipWhitespaces()
                 val value = this.parseValue()
                 array.add(value)
 
-                this.skipWhitespace()
+                this.skipWhitespaces()
                 when {
                     this.index < length && source[this.index] == ']' -> {
                         this.index++
@@ -187,35 +191,45 @@ object JsonStringManager {
             return result
         }
 
-        private fun parseValue(): Any? {
-            this.skipWhitespace()
-            return when {
-                source[this.index] in "-0123456789" -> {
-                    this.parseNumber()
-                }
+        private fun parseNumber(): Number {
+            val start = this.index
+            var hasDecimalPoint = false
+            var hasExponent = false
 
-                source.startsWith("\"", this.index) -> {
-                    this.parseString()
-                }
+            while (this.index < length && source[this.index] in "-0123456789.eE") {
+                when (source[this.index]) {
+                    '.' -> {
+                        if (hasDecimalPoint) {
+                            throw IllegalJsonStringParsingException("Multiple decimal points in number at position $this.index")
+                        }
+                        hasDecimalPoint = true
+                    }
 
-                source.startsWith("true", this.index) || source.startsWith("false", this.index) -> {
-                    this.parseBoolean()
+                    'e', 'E' -> {
+                        if (hasExponent) {
+                            throw IllegalJsonStringParsingException("Multiple exponents in number at position $this.index")
+                        }
+                        hasExponent = true
+                    }
                 }
+                this.index++
+            }
 
-                source.startsWith("null", this.index) -> {
-                    this.parseNull()
+            val numberStr = source.substring(start, this.index)
+
+            if (hasDecimalPoint || hasExponent) {
+                return numberStr.toDouble()
+            }
+
+            return when (val longValue = numberStr.toLong()) {
+                in Byte.MIN_VALUE .. Byte.MAX_VALUE -> {
+                    longValue.toByte()
                 }
-
-                source.startsWith("{", this.index) -> {
-                    this.parseObject()
+                in Int.MIN_VALUE..Int.MAX_VALUE -> {
+                    longValue.toInt()
                 }
-
-                source.startsWith("[", this.index) -> {
-                    this.parseList()
-                }
-
                 else -> {
-                    throw IllegalJsonStringParsingException("Unexpected character at position $this.index")
+                    longValue
                 }
             }
         }
@@ -251,35 +265,41 @@ object JsonStringManager {
             }
         }
 
-        private fun parseNumber(): Number {
-            val start = this.index
-            var hasDecimalPoint = false
-            var hasExponent = false
-
-            while (this.index < length && source[this.index] in "-0123456789.eE") {
-                when (source[this.index]) {
-                    '.' -> {
-                        if (hasDecimalPoint) {
-                            throw IllegalJsonStringParsingException("Multiple decimal points in number at position $this.index")
-                        }
-                        hasDecimalPoint = true
-                    }
-
-                    'e', 'E' -> {
-                        if (hasExponent) {
-                            throw IllegalJsonStringParsingException("Multiple exponents in number at position $this.index")
-                        }
-                        hasExponent = true
-                    }
+        private fun parseValue(): Any? {
+            this.skipWhitespaces()
+            return when {
+                source[this.index] in "-0123456789" -> {
+                    this.parseNumber()
                 }
-                this.index++
-            }
 
-            val numberStr = source.substring(start, this.index)
-            return if (hasDecimalPoint || hasExponent) numberStr.toDouble() else numberStr.toLong()
+                source.startsWith("\"", this.index) -> {
+                    this.parseString()
+                }
+
+                source.startsWith("true", this.index) || source.startsWith("false", this.index) -> {
+                    this.parseBoolean()
+                }
+
+                source.startsWith("null", this.index) -> {
+                    this.parseNull()
+                }
+
+                source.startsWith("{", this.index) -> {
+                    this.parseObject()
+                }
+
+                source.startsWith("[", this.index) -> {
+                    this.parseList()
+                }
+
+                else -> {
+                    throw IllegalJsonStringParsingException("Unexpected character at position $this.index")
+                }
+            }
         }
 
-        private fun skipWhitespace() {
+
+        private fun skipWhitespaces() {
             while (this.index < length && source[this.index].isWhitespace()) {
                 this.index++
             }

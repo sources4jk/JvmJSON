@@ -14,6 +14,30 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     @Throws(ClassCastException::class)
+    fun asByte(): Byte {
+        return this.value as Byte
+    }
+
+    @NotNull
+    @Throws(ClassCastException::class)
+    fun asInt(): Int {
+        return this.value as Int
+    }
+
+    @NotNull
+    @Throws(ClassCastException::class)
+    fun asDouble(): Double {
+        return this.value as Double
+    }
+
+    @NotNull
+    @Throws(ClassCastException::class)
+    fun asLong(): Long {
+        return this.value as Long
+    }
+
+    @NotNull
+    @Throws(ClassCastException::class)
     fun asNumber(): Number {
         return this.value as Number
     }
@@ -26,19 +50,19 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     @Throws(ClassCastException::class)
-    fun asObject(): IJO {
-        return this.value as IJO
+    fun asObject(): JsonObject {
+        return this.value as JsonObject
     }
 
     @NotNull
     @Throws(ClassCastException::class)
-    fun asList(): IJL {
-        return this.value as IJL
+    fun asList(): JsonList {
+        return this.value as JsonList
     }
 
     @NotNull
     @Throws(IllegalArgumentException::class)
-    fun asNullable(): Any? {
+    fun asNull(): Any? {
         if (this.value != null) {
             throw IllegalArgumentException("${value::class.java.simpleName} is not Null!")
         }
@@ -52,7 +76,7 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     override fun toString(): String {
-        return "Value={ ${this.value} }"
+        return "JsonValue { name: ${this.value?.javaClass?.simpleName}, value: ${this.value} }"
     }
 
     companion object Static {
@@ -64,28 +88,47 @@ class JsonValue(private val value: Any?) {
         @NotNull
         @JvmStatic
         fun handle(value: Any?): JsonValue {
-            return when(value) {
+            return when (value) {
                 is String -> {
                     JsonValue(value)
                 }
-                is Number -> {
+
+                is Byte -> {
                     JsonValue(value)
                 }
+
+                is Int -> {
+                    JsonValue(value)
+                }
+
+                is Double -> {
+                    JsonValue(value)
+                }
+
+                is Long -> {
+                    JsonValue(value)
+                }
+
                 is Boolean -> {
                     JsonValue(value)
                 }
-                is IJO -> {
+
+                is JsonObject -> {
                     JsonValue(value)
                 }
-                is IJL -> {
+
+                is JsonList -> {
                     JsonValue(value)
                 }
+
                 is JsonValue -> {
                     this.handle(value.asAny())
                 }
+
                 null -> {
                     this.Null
                 }
+
                 else -> {
                     throw IllegalJsonValueTypeException(value)
                 }
