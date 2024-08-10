@@ -94,7 +94,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      *
      * @param index The index to start the iterator at.
      * @return A [ListIterator] of [JsonValue].
-     * @throws IndexOutOfBoundsException If the index is out of range.
+     * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
     fun listIterator(index: Int): ListIterator<JsonValue> {
         return this.list.listIterator(index)
@@ -106,7 +106,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param from The start index, inclusive.
      * @param to The end index, exclusive.
      * @return A new [JsonList] containing the specified range.
-     * @throws IndexOutOfBoundsException If the indices are out of range.
+     * @throws [IndexOutOfBoundsException] If the indices are out of range.
      */
     fun sub(from: Int, to: Int): JsonList {
         return from(this.list.subList(from, to))
@@ -144,16 +144,40 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
     }
 
     /**
+     * Adds all elements from the specified [JsonList].
+     *
+     * @param elements The [JsonList] to add.
+     * @return true if the list changed as a result.
+     */
+    fun addAll(elements: JsonList): Boolean {
+        return this.list.addAll(elements.map { JsonValue.handle(it) })
+    }
+
+    /**
      * Inserts all elements from the specified collection at the specified position in the list.
      *
      * @param index The index at which to insert the first element.
      * @param elements The collection of elements to insert.
      * @return true if the list changed as a result.
-     * @throws IndexOutOfBoundsException If the index is out of range.
+     * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
     fun addAll(index: Int, elements: Collection<Any?>): Boolean {
         return this.list.addAll(index, elements.map { JsonValue.handle(it) })
     }
+
+    /**
+     * Inserts all elements from the specified [JsonList] at the specified position in the list.
+     *
+     * @param index The index at which to insert the first element.
+     * @param elements The [JsonList] to insert.
+     * @return true if the list changed as a result.
+     * @throws [IndexOutOfBoundsException] If the index is out of range.
+     */
+    fun addAll(index: Int, elements: JsonList): Boolean {
+        return this.list.addAll(index, elements.map { JsonValue.handle(it) })
+    }
+
+
 
     /**
      * Removes the first occurrence of the specified element from the list, if present.
@@ -262,35 +286,13 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
         }
 
         /**
-         * Creates a [JsonList] from the specified array.
+         * Creates a [JsonList] from the specified collection.
          *
-         * @param from The array to convert.
-         * @return A new [JsonList] containing the elements of the array.
+         * @param from The collection to convert.
+         * @return A new [JsonList] containing the elements of the collection.
          */
         @JvmStatic
-        fun from(from: Array<*>): JsonList {
-            return JsonList(from.map { JsonValue.handle(it) }.toCollection(ArrayList()))
-        }
-
-        /**
-         * Creates a [JsonList] from the specified list.
-         *
-         * @param from The list to convert.
-         * @return A new [JsonList] containing the elements of the list.
-         */
-        @JvmStatic
-        fun from(from: List<*>): JsonList {
-            return JsonList(from.map { JsonValue.handle(it) }.toCollection(ArrayList()))
-        }
-
-        /**
-         * Creates a [JsonList] from the specified set.
-         *
-         * @param from The set to convert.
-         * @return A new [JsonList] containing the elements of the set.
-         */
-        @JvmStatic
-        fun from(from: Set<*>): JsonList {
+        fun from(from: Collection<*>): JsonList {
             return JsonList(from.map { JsonValue.handle(it) }.toCollection(ArrayList()))
         }
 
@@ -310,7 +312,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
          *
          * @param source The JSON string to parse.
          * @return A new [JsonList] representing the JSON array.
-         * @throws IllegalJsonStringParsingException If the string cannot be parsed as a JSON list.
+         * @throws [IllegalJsonStringParsingException] If the string cannot be parsed as a JSON list.
          */
         @JvmStatic
         @Throws(IllegalJsonStringParsingException::class)

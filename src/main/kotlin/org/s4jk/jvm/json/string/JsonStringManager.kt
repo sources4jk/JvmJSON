@@ -4,7 +4,6 @@ import org.s4jk.jvm.json.IllegalJsonValueTypeException
 import org.s4jk.jvm.json.core.JsonList
 import org.s4jk.jvm.json.core.JsonObject
 import org.s4jk.jvm.json.core.JsonValue
-import org.s4jk.jvm.json.string.parsers.JsonStringParser
 
 
 object JsonStringManager {
@@ -69,7 +68,7 @@ object JsonStringManager {
 
     private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
         return when (value.asAny()) {
-            is Byte, is Int, is Double, is Long -> {
+            is Byte, is Short, is Int, is Double, is Long -> {
                 value.asNumber().toString()
             }
 

@@ -20,6 +20,12 @@ class JsonValue(private val value: Any?) {
 
     @NotNull
     @Throws(ClassCastException::class)
+    fun asShort(): Short {
+        return this.value as Short
+    }
+
+    @NotNull
+    @Throws(ClassCastException::class)
     fun asInt(): Int {
         return this.value as Int
     }
@@ -94,6 +100,10 @@ class JsonValue(private val value: Any?) {
                 }
 
                 is Byte -> {
+                    JsonValue(value)
+                }
+
+                is Short -> {
                     JsonValue(value)
                 }
 

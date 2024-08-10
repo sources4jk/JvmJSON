@@ -52,6 +52,17 @@ fun jsonListOf(vararg elements: Any?): JsonList {
 }
 
 /**
+ * Converts this [Collection] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the elements of the collection.
+ */
+@NotNull
+@JvmSynthetic
+fun Collection<*>.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList)
+}
+
+/**
  * Converts this [Array] to a [JsonList].
  *
  * @return A new [JsonList] containing the elements of the array.
@@ -59,29 +70,95 @@ fun jsonListOf(vararg elements: Any?): JsonList {
 @NotNull
 @JvmSynthetic
 fun Array<*>.toJsonList(): JsonList {
-    return JsonList.from(this@toJsonList)
+    return JsonList.from(this@toJsonList.toList())
 }
 
 /**
- * Converts this [List] to a [JsonList].
+ * Converts this [CharArray] to a [JsonList].
  *
- * @return A new [JsonList] containing the elements of the list.
+ * @return A new [JsonList] containing the characters of the array.
  */
 @NotNull
 @JvmSynthetic
-fun List<*>.toJsonList(): JsonList {
-    return JsonList.from(this@toJsonList)
+fun CharArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.map { it.toString() }.toList())
 }
 
 /**
- * Converts this [Set] to a [JsonList].
+ * Converts this [ByteArray] to a [JsonList].
  *
- * @return A new [JsonList] containing the elements of the set.
+ * @return A new [JsonList] containing the bytes of the array.
  */
 @NotNull
 @JvmSynthetic
-fun Set<*>.toJsonList(): JsonList {
-    return JsonList.from(this@toJsonList)
+fun ByteArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [ShortArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the short values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun ShortArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [IntArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the integer values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun IntArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [DoubleArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the double values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun DoubleArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [FloatArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the float values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun FloatArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [LongArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the long values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun LongArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
+}
+
+/**
+ * Converts this [BooleanArray] to a [JsonList].
+ *
+ * @return A new [JsonList] containing the boolean values of the array.
+ */
+@NotNull
+@JvmSynthetic
+fun BooleanArray.toJsonList(): JsonList {
+    return JsonList.from(this@toJsonList.toList())
 }
 
 /**

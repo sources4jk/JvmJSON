@@ -17,14 +17,11 @@ class CreateJson {
             "key 6" to false
             "key 7" to null
             "key 8" to jsonListOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
-            "key 9" to jsonObjectOf {
-                "key 1" to 1
-                "key 2" to 2
-                "key 3" to 3
-                "key 4" to 4
-                "key 5" to 5
-            }
+            "key 9" to jsonObjectOf { "key 1" to 1; "key 2" to 2; "key 3" to 3; "key 4" to 4; "key 5" to 5 }
         }
+        /**
+         * create [JsonObject] form existing [JsonObject]
+         */
         JsonObject.from(json)
     }
 
@@ -39,13 +36,7 @@ class CreateJson {
             "key 6" to false,
             "key 7" to null,
             "key 8" to jsonListOf(1, 2, 3, 4, 5, 6, 7, 8, 9),
-            "key 9" to mapOf(
-                "key 1" to 1,
-                "key 2" to 2,
-                "key 3" to 3,
-                "key 4" to 4,
-                "key 5" to 5,
-            ).toJsonObject()
+            "key 9" to mapOf("key 1" to 1, "key 2" to 2, "key 3" to 3, "key 4" to 4, "key 5" to 5).toJsonObject()
         ).toJsonObject()
     }
 
@@ -91,16 +82,37 @@ class CreateJson {
             false,
             null,
             jsonListOf(1, 2, 3, 4, 5, 6, 7, 8, 9),
-            jsonObjectOf {
-                "key 1" to 1
-                "key 2" to 2
-                "key 3" to 3
-                "key 4" to 4
-                "key 5" to 5
-            }
+            jsonObjectOf { "key 1" to 1; "key 2" to 2; "key 3" to 3; "key 4" to 4; "key 5" to 5 }
         )
 
         JsonList.from(list)
+    }
+
+    @Test
+    fun createJsonListFromCollection() {
+        listOf(
+            123456789,
+            -123456789,
+            1.2345678e9,
+            "string value",
+            true,
+            false,
+            null,
+            listOf(1, 2, 3, 4, 5, 6, 7, 8, 9).toJsonList(),
+            mapOf("key 1" to 1, "key 2" to 2, "key 3" to 3, "key 4" to 4, "key 5" to 5).toJsonObject()
+        ).toJsonList()
+
+        setOf(
+            123456789,
+            -123456789,
+            1.2345678e9,
+            "string value",
+            true,
+            false,
+            null,
+            setOf(1, 2, 3, 4, 5, 6, 7, 8, 9).toJsonList(),
+            mapOf("key 1" to 1, "key 2" to 2, "key 3" to 3, "key 4" to 4, "key 5" to 5).toJsonObject()
+        ).toJsonList()
     }
 
     @Test
@@ -114,58 +126,18 @@ class CreateJson {
             false,
             null,
             arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9).toJsonList(),
-            mapOf(
-                "key 1" to 1,
-                "key 2" to 2,
-                "key 3" to 3,
-                "key 4" to 4,
-                "key 5" to 5,
-            ).toJsonObject()
+            mapOf("key 1" to 1, "key 2" to 2, "key 3" to 3, "key 4" to 4, "key 5" to 5).toJsonObject()
         ).toJsonList()
 
+        charArrayOf('a', 'b', 'c', 'd', 'e', 'f').toJsonList()
+        byteArrayOf(Byte.MIN_VALUE, 0, Byte.MAX_VALUE).toJsonList()
+        shortArrayOf(Short.MIN_VALUE, 0, Short.MAX_VALUE).toJsonList()
+        intArrayOf(Int.MIN_VALUE,0, Int.MAX_VALUE).toJsonList()
+        longArrayOf(Long.MIN_VALUE,0, Long.MAX_VALUE).toJsonList()
+        doubleArrayOf(Double.MIN_VALUE,0.0, Double.MAX_VALUE).toJsonList()
+        floatArrayOf(Float.MIN_VALUE,0f, Float.MAX_VALUE).toJsonList()
     }
 
-    @Test
-    fun createJsonListFromList() {
-        listOf(
-            123456789,
-            -123456789,
-            1.2345678e9,
-            "string value",
-            true,
-            false,
-            null,
-            listOf(1, 2, 3, 4, 5, 6, 7, 8, 9).toJsonList(),
-            mapOf(
-                "key 1" to 1,
-                "key 2" to 2,
-                "key 3" to 3,
-                "key 4" to 4,
-                "key 5" to 5,
-            ).toJsonObject()
-        ).toJsonList()
-    }
-
-    @Test
-    fun createJsonListFromSet() {
-        setOf(
-            123456789,
-            -123456789,
-            1.2345678e9,
-            "string value",
-            true,
-            false,
-            null,
-            setOf(1, 2, 3, 4, 5, 6, 7, 8, 9).toJsonList(),
-            mapOf(
-                "key 1" to 1,
-                "key 2" to 2,
-                "key 3" to 3,
-                "key 4" to 4,
-                "key 5" to 5,
-            ).toJsonObject()
-        ).toJsonList()
-    }
 
     @Test
     fun createJsonListFromString() {

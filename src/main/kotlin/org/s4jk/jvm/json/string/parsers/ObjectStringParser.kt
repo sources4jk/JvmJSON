@@ -6,32 +6,32 @@ import org.s4jk.jvm.json.core.JsonObject
 class ObjectStringParser(private val parser: JsonStringParser) {
     fun parse(): JsonObject {
         val json = JsonObject.create()
-        parser.advanceIndex()
-        parser.skipWhitespaces()
+        this.parser.advanceIndex()
+        this.parser.skipWhitespaces()
 
-        if (parser.currentChar() == '}') {
-            parser.advanceIndex()
+        if (this.parser.currentChar() == '}') {
+            this.parser.advanceIndex()
             return json
         }
 
         while (true) {
-            parser.skipWhitespaces()
+            this.parser.skipWhitespaces()
             val key = ValueStringParser.StringParser(parser).parseString()
 
-            parser.skipWhitespaces()
-            parser.requireChar(':')
+            this.parser.skipWhitespaces()
+            this.parser.requireChar(':')
 
             val value = ValueStringParser(parser).parseValue()
             json[key] = value
 
-            parser.skipWhitespaces()
-            when (parser.currentChar()) {
+            this.parser.skipWhitespaces()
+            when (this.parser.currentChar()) {
                 '}' -> {
-                    parser.advanceIndex()
+                    this.parser.advanceIndex()
                     return json
                 }
-                ',' -> parser.advanceIndex()
-                else -> throw IllegalJsonStringParsingException("Expected '}' or ',' at position ${parser.currentIndex()}")
+                ',' -> this.parser.advanceIndex()
+                else -> throw IllegalJsonStringParsingException("Expected '}' or ',' at position ${this.parser.currentIndex()}")
             }
         }
     }

@@ -6,7 +6,7 @@ import org.s4jk.jvm.json.core.JsonObject
 
 class JsonStringParser(val source: String) {
     private var index = 0
-    val length = source.length
+    val length get() = source.length
 
     fun parseObject(): JsonObject = ObjectStringParser(this).parse()
     fun parseList(): JsonList = ListStringParser(this).parse()
@@ -25,7 +25,9 @@ class JsonStringParser(val source: String) {
     }
 
     fun currentChar(): Char = source[this.index]
+
     fun currentIndex(): Int = this.index
+
     fun advanceIndex(advance: Int = 1) {
         this.index += advance
     }
