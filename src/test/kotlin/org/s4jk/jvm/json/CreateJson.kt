@@ -136,6 +136,7 @@ class CreateJson {
         longArrayOf(Long.MIN_VALUE,0, Long.MAX_VALUE).toJsonList()
         doubleArrayOf(Double.MIN_VALUE,0.0, Double.MAX_VALUE).toJsonList()
         floatArrayOf(Float.MIN_VALUE,0f, Float.MAX_VALUE).toJsonList()
+        booleanArrayOf(true, false).toJsonList()
     }
 
 
