@@ -3,7 +3,6 @@ package org.s4jk.jvm.json
 import org.jetbrains.annotations.NotNull
 import org.s4jk.jvm.json.core.JsonList
 import org.s4jk.jvm.json.core.JsonObject
-import org.s4jk.jvm.json.core.JsonValue
 
 /**
  * Creates a [JsonObject] using a DSL-style syntax.
@@ -16,18 +15,6 @@ import org.s4jk.jvm.json.core.JsonValue
 fun jsonObjectOf(@NotNull buildAction: JsonObject.Constructor.() -> Unit): JsonObject {
     val builder = JsonObject.Constructor().apply { this.buildAction() }
     return JsonObject.from(builder.map)
-}
-
-/**
- * Creates a [JsonObject] from the given key-value pairs.
- *
- * @param entries The key-value pairs to include in the [JsonObject].
- * @return A new [JsonObject] containing the provided entries.
- */
-@NotNull
-@JvmSynthetic
-fun jsonObjectOf(@NotNull vararg entries: Pair<String, Any?>): JsonObject {
-    return JsonObject.from(entries.associate { (key, value) -> key to JsonValue.handle(value) }.toMutableMap())
 }
 
 /**
