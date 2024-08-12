@@ -3,7 +3,7 @@ package org.s4jk.jvm.json.string.parsers
 import org.s4jk.jvm.json.IllegalJsonStringParsingException
 import org.s4jk.jvm.json.core.JsonList
 
-class ListStringParser(private val parser: JsonStringParser) {
+class ListStringParser(private val parser: Parser) {
     fun parse(): JsonList {
         val list = JsonList.create()
         this.parser.advanceIndex()

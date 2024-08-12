@@ -2,7 +2,7 @@ package org.s4jk.jvm.json.string.parsers
 
 import org.s4jk.jvm.json.IllegalJsonStringParsingException
 
-class ValueStringParser(private val parser: JsonStringParser) {
+class ValueStringParser(private val parser: Parser) {
     fun parseValue(): Any? {
         this.parser.skipWhitespaces()
         return when {
@@ -19,7 +19,7 @@ class ValueStringParser(private val parser: JsonStringParser) {
                 NullParser(parser).parseNull()
             }
             this.parser.currentChar() == '{' -> {
-                ObjectStringParser(parser).parse()
+                JsonStringParser(parser).parse()
             }
             this.parser.currentChar() == '[' -> {
                 ListStringParser(parser).parse()
@@ -30,7 +30,7 @@ class ValueStringParser(private val parser: JsonStringParser) {
         }
     }
 
-    class StringParser(private val parser: JsonStringParser) {
+    class StringParser(private val parser: Parser) {
         fun parseString(): String {
             this.parser.requireChar('"')
             val start = this.parser.currentIndex()
@@ -49,7 +49,7 @@ class ValueStringParser(private val parser: JsonStringParser) {
         }
     }
 
-    class NumberParser(private val parser: JsonStringParser) {
+    class NumberParser(private val parser: Parser) {
         fun parseNumber(): Number {
             val start = this.parser.currentIndex()
             var hasDecimalPoint = false
@@ -88,7 +88,7 @@ class ValueStringParser(private val parser: JsonStringParser) {
         }
     }
 
-    class BooleanParser(private val parser: JsonStringParser) {
+    class BooleanParser(private val parser: Parser) {
         fun parseBoolean(): Boolean {
             return when {
                 this.parser.source.startsWith("true", this.parser.currentIndex()) -> {
@@ -105,7 +105,7 @@ class ValueStringParser(private val parser: JsonStringParser) {
     }
 
 
-    class NullParser(private val parser: JsonStringParser) {
+    class NullParser(private val parser: Parser) {
         fun parseNull(): Any? {
             return when {
                 this.parser.source.startsWith("null", this.parser.currentIndex()) -> {

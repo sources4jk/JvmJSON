@@ -22,7 +22,6 @@ object JsonStringManager {
             append("{").append(tabs(indent))
 
             json.entries.forEachIndexed { index, (key, value) ->
-
                 append(spaces(indent, depth))
                 append("\"${key}\": ").append(valueToString(value, indent, depth + 1))
 
@@ -68,7 +67,7 @@ object JsonStringManager {
 
     private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
         return when (value.asAny()) {
-            is Byte, is Short, is Int, is Double, is Long -> {
+            is Number -> {
                 value.asNumber().toString()
             }
 
@@ -81,11 +80,11 @@ object JsonStringManager {
             }
 
             is JsonObject -> {
-                jsonObjectToString(value.asObject(), indent, depth)
+                jsonObjectToString(value.asJsonObject(), indent, depth)
             }
 
             is JsonList -> {
-                jsonListToString(value.asList(), indent, depth)
+                jsonListToString(value.asJsonList(), indent, depth)
             }
 
             null -> {

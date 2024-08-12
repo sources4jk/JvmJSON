@@ -1,6 +1,17 @@
 package org.s4jk.jvm.json
 
-class IllegalJsonValueTypeException(value: Any?):
-    Exception("Invalid value type: ${value?.javaClass?.simpleName}")
+import kotlin.reflect.KClass
 
-class IllegalJsonStringParsingException(message: String): Exception(message)
+class IllegalJsonValueTypeException(value: Any?): Exception(
+    "Invalid value type: ${value?.javaClass?.simpleName}"
+)
+
+class JsonValueTypeCastException(value: Any?, cast: KClass<*>): RuntimeException(
+    "${value?.javaClass?.name} cannot be cast to $cast"
+)
+
+class JsonValueNullException(value: Any?): RuntimeException(
+    "${value?.javaClass?.name} cannot be null"
+)
+
+class IllegalJsonStringParsingException(message: String): RuntimeException(message)

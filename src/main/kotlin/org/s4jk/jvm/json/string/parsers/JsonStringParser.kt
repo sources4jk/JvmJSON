@@ -1,34 +1,38 @@
 package org.s4jk.jvm.json.string.parsers
 
 import org.s4jk.jvm.json.IllegalJsonStringParsingException
-import org.s4jk.jvm.json.core.JsonList
 import org.s4jk.jvm.json.core.JsonObject
 
-class JsonStringParser(val source: String) {
-    private var index = 0
-    val length get() = source.length
+class JsonStringParser(private val parser: Parser) {
+    fun parse(): JsonObject {
+        val json = JsonObject()
+        this.parser.advanceIndex()
+        this.parser.skipWhitespaces()
 
-    fun parseObject(): JsonObject = ObjectStringParser(this).parse()
-    fun parseList(): JsonList = ListStringParser(this).parse()
-
-    fun skipWhitespaces() {
-        while (this.index < length && source[this.index].isWhitespace()) {
-            this.index++
+        if (this.parser.currentChar() == '}') {
+            this.parser.advanceIndex()
+            return json
         }
-    }
 
-    fun requireChar(expected: Char) {
-        if (this.index >= length || source[this.index] != expected) {
-            throw IllegalJsonStringParsingException("Expected '$expected' at position $this.index")
+        while (true) {
+            this.parser.skipWhitespaces()
+            val key = ValueStringParser.StringParser(parser).parseString()
+
+            this.parser.skipWhitespaces()
+            this.parser.requireChar(':')
+
+            val value = ValueStringParser(parser).parseValue()
+            json[key] = value
+
+            this.parser.skipWhitespaces()
+            when (this.parser.currentChar()) {
+                '}' -> {
+                    this.parser.advanceIndex()
+                    return json
+                }
+                ',' -> this.parser.advanceIndex()
+                else -> throw IllegalJsonStringParsingException("Expected '}' or ',' at position ${this.parser.currentIndex()}")
+            }
         }
-        this.index++
-    }
-
-    fun currentChar(): Char = source[this.index]
-
-    fun currentIndex(): Int = this.index
-
-    fun advanceIndex(advance: Int = 1) {
-        this.index += advance
     }
 }

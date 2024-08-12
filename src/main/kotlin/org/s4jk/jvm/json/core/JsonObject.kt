@@ -1,249 +1,134 @@
 package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import org.s4jk.jvm.json.collections.JsonMap
 import org.s4jk.jvm.json.string.JsonStringManager
-import org.s4jk.jvm.json.string.parsers.JsonStringParser
+import org.s4jk.jvm.json.string.parsers.Parser
+import java.util.LinkedList
 import java.util.Spliterator
 import java.util.function.Consumer
 
 /**
- * The [JsonObject] class represents a mutable map of JSON key-value pairs.
- * It provides methods for manipulating the map, including adding, removing,
- * and searching for entries. The class implements the [MutableIterable] interface
- * for iterating over the map's entries.
- *
- * @property map The underlying [HashMap] that stores the key-value pairs.
- * @property size The number of entries in the map.
- * @property entries A set of all entries in the map.
- * @property keys A set of all keys in the map.
- * @property values A collection of all values in the map.
+ * The [JsonObject] class represents a mutable JSON object.
+ * It implements the [JsonMap] interface and provides various methods
+ * for manipulating JSON objects, such as adding, removing, and retrieving
+ * entries. It also supports JSON serialization and deserialization.
  */
-class JsonObject private constructor(
-    @NotNull private val map: HashMap<String, JsonValue>
-): MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
-
-    @get:NotNull
-    val size: Int get() = this.map.size
-
-    @get:NotNull
-    val entries: Set<Map.Entry<String, JsonValue>> get() = this.map.entries
-
-    @get:NotNull
-    val keys: Set<String> get() = this.map.keys
-
-    @get:NotNull
-    val values: Collection<JsonValue> get() = this.map.values
+class JsonObject(): JsonMap {
 
     /**
-     * Checks if the map is empty.
+     * Constructs a new [JsonObject] by copying entries from another [JsonObject].
      *
-     * @return true if the map is empty.
+     * @param from The [JsonObject] to copy.
      */
-    @NotNull
-    fun isEmpty(): Boolean {
-        return this.map.isEmpty()
+    constructor(from: JsonObject): this() {
+        this._entries.addAll(from.entries)
     }
 
     /**
-     * Checks if the map contains the specified key.
+     * Constructs a new [JsonObject] from a [Map].
      *
-     * @param key The key to check for.
-     * @return true if the key is found.
+     * @param from The map to convert to a [JsonObject].
      */
-    @NotNull
-    fun containsKey(key: String): Boolean {
-        return this.map.containsKey(key)
+    constructor(from: Map<*, *>): this() {
+        this._entries.addAll(from.map { Node(it.key.toString(), JsonValue.recognize(it.value)) })
     }
 
     /**
-     * Checks if the map contains the specified value.
+     * Constructs a new [JsonObject] from a JSON-formatted string.
      *
-     * @param value The value to check for.
-     * @return true if the value is found.
+     * @param from The JSON string to parse.
      */
-    @NotNull
-    fun containsValue(value: Any?): Boolean {
-        return this.map.containsValue(JsonValue.handle(value))
+    constructor(from: String): this() {
+        JsonObject(Parser(from).parseObject())
     }
 
-    /**
-     * Retrieves the value associated with the specified key, or [JsonValue.Null] if not found.
-     *
-     * @param key The key of the value to retrieve.
-     * @return The [JsonValue] associated with the key, or [JsonValue.Null].
-     */
-    @NotNull
-    operator fun get(key: String): JsonValue {
-        return this.map[key] ?: JsonValue.Null
+
+    private val _entries: LinkedHashSet<JsonMap.Node> = LinkedHashSet()
+
+    override val size: Int
+        get() = this._entries.size
+
+    override val entries: LinkedHashSet<JsonMap.Node>
+        get() = _entries
+
+    override val keys: LinkedHashSet<String>
+        get() = this._entries.map { it.key }.toCollection(LinkedHashSet())
+
+    override val values: LinkedList<JsonValue>
+        get() = this._entries.map { it.value }.toCollection(LinkedList())
+
+
+    override fun isEmpty(): Boolean {
+        return this._entries.isEmpty()
     }
 
-    /**
-     * Retrieves the value associated with the specified key, or a default value if not found.
-     *
-     * @param key The key of the value to retrieve.
-     * @param defaultValue The default value to return if the key is not found.
-     * @return The [JsonValue] associated with the key, or the default value.
-     */
-    @NotNull
-    fun getOrDefault(key: String, defaultValue: Any?): JsonValue {
-        return this.map.getOrDefault(key, JsonValue.handle(defaultValue))
+    override fun containsKey(key: String): Boolean {
+        return this._entries.find { it.key == key } != null
     }
 
-    /**
-     * Associates the specified value with the specified key in the map.
-     *
-     * @param key The key with which the specified value is to be associated.
-     * @param value The value to be associated with the key.
-     * @return The previous value associated with the key, or [JsonValue.Null] if there was no mapping.
-     */
-    @Nullable
-    operator fun set(key: String, value: Any?): JsonValue {
-        return this.map.put(key, JsonValue.handle(value)) ?: JsonValue.Null
+    override fun containsValue(value: Any?): Boolean {
+        return this._entries.find { it.value == JsonValue.recognize(value) } != null
     }
 
-    /**
-     * Copies all key-value pairs from the specified [JsonObject] to this map.
-     *
-     * @param from The [JsonObject] to copy entries from.
-     */
-    fun setAll(from: JsonObject) {
-        this.map.putAll(from.map)
+    override operator fun get(key: String): JsonValue {
+        return this._entries.find { it.key == key }?.value ?: JsonValue.NULL
     }
 
-    /**
-     * Removes the entry for the specified key from the map.
-     *
-     * @param key The key whose entry is to be removed.
-     * @return The previous value associated with the key, or null if there was no mapping.
-     */
-    @Nullable
-    fun remove(key: String): JsonValue? {
-        return this.map.remove(key)
+    override fun getOrDefault(key: String, defaultValue: Any?): JsonValue {
+        return this._entries.find { it.key == key }?.value ?: JsonValue.recognize(defaultValue)
     }
 
-    /**
-     * Removes all entries from the map.
-     */
-    fun clear() {
-        return this.map.clear()
+    override operator fun set(key: String, value: Any?): JsonValue {
+        this._entries.removeIf { it.key == key }.also { this._entries += Node(key, JsonValue.recognize(value)) }
+        return JsonValue.recognize(value)
     }
 
-    /**
-     * Returns a JSON-formatted string representation of the map with the specified indentation.
-     *
-     * @param indent The number of spaces to use for indentation.
-     * @return A formatted JSON string representing the map.
-     */
-    @NotNull
-    fun toString(@NotNull indent: Int): String {
+    override fun remove(key: String): JsonValue {
+        return this._entries.find { it.key == key }?.let { node ->
+            this._entries.remove(node)
+            node.value
+        } ?: JsonValue.NULL
+    }
+
+    override fun remove(key: String, value: Any?): Boolean {
+        return this.entries.removeIf { it.key == key && it.value == value }
+    }
+
+    override fun clear() {
+        return this.entries.clear()
+    }
+
+    override fun toString(): String {
+        return this.toString(0)
+    }
+
+    override fun toString(indent: Int): String {
         return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
+    override fun forEach(@NotNull action: Consumer<in JsonMap.Node?>) {
+        return this.entries.forEach(action)
+    }
+
+    override fun spliterator(): Spliterator<JsonMap.Node> {
+        return this.entries.spliterator()
+    }
+
+    override fun iterator(): MutableIterator<JsonMap.Node> {
+        return this.entries.iterator()
+    }
+
     /**
-     * Returns a JSON-formatted string representation of the map.
+     * Represents a key-value pair in the JSON object.
+     * This class is used to store and retrieve individual entries in a [JsonObject].
+     * It holds a [key] of type [String] and a [value] of type [JsonValue].
      *
-     * @return A JSON string representing the map.
+     * @property key The key of the [Node].
+     * @property value The value of the [Node].
      */
-    @NotNull
-    override fun toString(): String {
-        return JsonStringManager.jsonObjectToString(this, 0, 1)
-    }
-
-    /**
-     * Performs the given action for each entry in the map.
-     *
-     * @param action The action to perform on each entry.
-     */
-    override fun forEach(action: Consumer<in MutableMap.MutableEntry<String, JsonValue>>?) {
-        return this.map.entries.forEach(action)
-    }
-
-    /**
-     * Creates a [Spliterator] over the entries in the map.
-     *
-     * @return A [Spliterator] of [MutableMap.MutableEntry]<[String], [JsonValue]>.
-     */
-    @NotNull
-    override fun spliterator(): Spliterator<MutableMap.MutableEntry<String, JsonValue>> {
-        return this.map.entries.spliterator()
-    }
-
-    /**
-     * Returns an iterator over the entries in the map.
-     *
-     * @return A [MutableIterator] of [MutableMap.MutableEntry]<[String], [JsonValue]>.
-     */
-    @NotNull
-    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, JsonValue>> {
-        return this.map.entries.iterator()
-    }
-
-    /**
-     * The [Constructor] class is used to build a [JsonObject] using a DSL-style syntax.
-     */
-    class Constructor {
-        internal val map: HashMap<String, JsonValue> = hashMapOf()
-
-        /**
-         * Adds a key-value pair to the [JsonObject].
-         *
-         * @param value The value to associate with the key.
-         */
-        infix fun String.to(value: Any?) {
-            this@Constructor.map[this] = JsonValue.handle(value)
-        }
-    }
-
-    companion object Static {
-
-        /**
-         * Creates a new, empty [JsonObject].
-         *
-         * @return A new instance of [JsonObject].
-         */
-        @NotNull
-        @JvmStatic
-        fun create(): JsonObject {
-            return JsonObject(hashMapOf())
-        }
-
-        /**
-         * Creates a [JsonObject] from the specified map.
-         *
-         * @param from The map to convert.
-         * @return A new [JsonObject] containing the entries of the map.
-         */
-        @NotNull
-        @JvmStatic
-        fun from(@NotNull from: Map<*, *>): JsonObject {
-            return JsonObject(HashMap(from.entries.associate { (key, value) ->
-                key.toString() to JsonValue.handle(value)
-            }))
-        }
-
-        /**
-         * Creates a [JsonObject] from the specified [JsonObject].
-         *
-         * @param from The [JsonObject] to copy.
-         * @return A new [JsonObject] containing the same entries as the original.
-         */
-        @NotNull
-        @JvmStatic
-        fun from(@NotNull from: JsonObject): JsonObject {
-            return JsonObject(HashMap(from.map))
-        }
-
-        /**
-         * Creates a [JsonObject] from the specified JSON string.
-         *
-         * @param from The JSON string to parse.
-         * @return A new [JsonObject] representing the parsed JSON.
-         */
-        @NotNull
-        @JvmStatic
-        fun from(@NotNull from: String): JsonObject {
-            return JsonStringParser(from).parseObject()
-        }
+    class Node(override val key: String, override val value: JsonValue): JsonMap.Node {
+        override fun component1(): String = this.key
+        override fun component2(): JsonValue = this.value
     }
 }

@@ -1,8 +1,10 @@
 package org.s4jk.jvm.json.core
 
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import org.s4jk.jvm.json.IllegalJsonStringParsingException
 import org.s4jk.jvm.json.string.JsonStringManager
-import org.s4jk.jvm.json.string.parsers.JsonStringParser
+import org.s4jk.jvm.json.string.parsers.Parser
 import java.util.Spliterator
 import java.util.function.Consumer
 import kotlin.jvm.Throws
@@ -25,6 +27,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      *
      * @return true if the list is empty, false otherwise.
      */
+    @NotNull
     fun isEmpty(): Boolean {
         return this.list.isEmpty()
     }
@@ -35,8 +38,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to check for.
      * @return true if the element is found.
      */
-    fun contains(element: Any?): Boolean {
-        return this.list.contains(JsonValue.handle(element))
+    @NotNull
+    fun contains(@Nullable element: Any?): Boolean {
+        return this.list.contains(JsonValue.recognize(element))
     }
 
     /**
@@ -45,8 +49,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param elements The collection of elements to check for.
      * @return true if all elements are found.
      */
-    fun containsAll(elements: Collection<Any?>): Boolean {
-        return this.list.containsAll(elements.map { JsonValue.handle(it) })
+    @NotNull
+    fun containsAll(@NotNull elements: Collection<Any?>): Boolean {
+        return this.list.containsAll(elements.map { JsonValue.recognize(it) })
     }
 
     /**
@@ -56,7 +61,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return The [JsonValue] at the specified index.
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    operator fun get(index: Int): JsonValue {
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    operator fun get(@NotNull index: Int): JsonValue {
         return this.list[index]
     }
 
@@ -66,8 +73,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to search for.
      * @return The index of the element, or -1 if not found.
      */
-    fun indexOf(element: Any?): Int {
-        return this.list.indexOf(JsonValue.handle(element))
+    @NotNull
+    fun indexOf(@Nullable element: Any?): Int {
+        return this.list.indexOf(JsonValue.recognize(element))
     }
 
     /**
@@ -76,8 +84,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to search for.
      * @return The index of the element, or -1 if not found.
      */
-    fun lastIndexOf(element: Any?): Int {
-        return this.list.lastIndexOf(JsonValue.handle(element))
+    @NotNull
+    fun lastIndexOf(@Nullable element: Any?): Int {
+        return this.list.lastIndexOf(JsonValue.recognize(element))
     }
 
     /**
@@ -85,6 +94,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      *
      * @return A [ListIterator] of [JsonValue].
      */
+    @NotNull
     fun listIterator(): ListIterator<JsonValue> {
         return this.list.listIterator()
     }
@@ -96,7 +106,8 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return A [ListIterator] of [JsonValue].
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    fun listIterator(index: Int): ListIterator<JsonValue> {
+    @NotNull
+    fun listIterator(@NotNull index: Int): ListIterator<JsonValue> {
         return this.list.listIterator(index)
     }
 
@@ -108,7 +119,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return A new [JsonList] containing the specified range.
      * @throws [IndexOutOfBoundsException] If the indices are out of range.
      */
-    fun sub(from: Int, to: Int): JsonList {
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    fun sub(@NotNull from: Int, @NotNull to: Int): JsonList {
         return from(this.list.subList(from, to))
     }
 
@@ -118,8 +131,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to add.
      * @return true if the list changed as a result.
      */
-    fun add(element: Any?): Boolean {
-        return this.list.add(JsonValue.handle(element))
+    @NotNull
+    fun add(@Nullable element: Any?): Boolean {
+        return this.list.add(JsonValue.recognize(element))
     }
 
     /**
@@ -129,8 +143,10 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to insert.
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    fun add(index: Int, element: Any?) {
-        return this.list.add(index, JsonValue.handle(element))
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    fun add(@NotNull index: Int, @Nullable  element: Any?) {
+        return this.list.add(index, JsonValue.recognize(element))
     }
 
     /**
@@ -139,8 +155,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param elements The collection of elements to add.
      * @return true if the list changed as a result.
      */
-    fun addAll(elements: Collection<Any?>): Boolean {
-        return this.list.addAll(elements.map { JsonValue.handle(it) })
+    @NotNull
+    fun addAll(@NotNull elements: Collection<Any?>): Boolean {
+        return this.list.addAll(elements.map { JsonValue.recognize(it) })
     }
 
     /**
@@ -149,8 +166,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param elements The [JsonList] to add.
      * @return true if the list changed as a result.
      */
-    fun addAll(elements: JsonList): Boolean {
-        return this.list.addAll(elements.map { JsonValue.handle(it) })
+    @NotNull
+    fun addAll(@NotNull elements: JsonList): Boolean {
+        return this.list.addAll(elements.map { JsonValue.recognize(it) })
     }
 
     /**
@@ -161,8 +179,10 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return true if the list changed as a result.
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    fun addAll(index: Int, elements: Collection<Any?>): Boolean {
-        return this.list.addAll(index, elements.map { JsonValue.handle(it) })
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    fun addAll(@NotNull index: Int, @NotNull elements: Collection<Any?>): Boolean {
+        return this.list.addAll(index, elements.map { JsonValue.recognize(it) })
     }
 
     /**
@@ -173,11 +193,11 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return true if the list changed as a result.
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    fun addAll(index: Int, elements: JsonList): Boolean {
-        return this.list.addAll(index, elements.map { JsonValue.handle(it) })
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    fun addAll(@NotNull index: Int, @NotNull elements: JsonList): Boolean {
+        return this.list.addAll(index, elements.map { JsonValue.recognize(it) })
     }
-
-
 
     /**
      * Removes the first occurrence of the specified element from the list, if present.
@@ -185,8 +205,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param element The element to remove.
      * @return true if the list contained the specified element.
      */
-    fun remove(element: Any?): Boolean {
-        return this.list.remove(JsonValue.handle(element))
+    @NotNull
+    fun remove(@Nullable element: Any?): Boolean {
+        return this.list.remove(JsonValue.recognize(element))
     }
 
     /**
@@ -196,7 +217,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @return The element that was removed.
      * @throws [IndexOutOfBoundsException] If the index is out of range.
      */
-    fun removeAt(index: Int): JsonValue {
+    @NotNull
+    @Throws(IndexOutOfBoundsException::class)
+    fun removeAt(@NotNull index: Int): JsonValue {
         return this.list.removeAt(index)
     }
 
@@ -206,8 +229,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param elements The collection of elements to remove.
      * @return true if the list changed as a result.
      */
-    fun removeAll(elements: Collection<Any?>): Boolean {
-        return this.list.removeAll(elements.map { JsonValue.handle(it) }.toSet())
+    @NotNull
+    fun removeAll(@NotNull elements: Collection<Any?>): Boolean {
+        return this.list.removeAll(elements.map { JsonValue.recognize(it) }.toSet())
     }
 
     /**
@@ -216,8 +240,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param elements The collection of elements to retain.
      * @return true if the list changed as a result.
      */
-    fun retainAll(elements: Collection<Any?>): Boolean {
-        return this.list.retainAll(elements.map { JsonValue.handle(it) }.toSet())
+    @NotNull
+    fun retainAll(@NotNull elements: Collection<Any?>): Boolean {
+        return this.list.retainAll(elements.map { JsonValue.recognize(it) }.toSet())
     }
 
     /**
@@ -232,6 +257,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      *
      * @return A JSON string representing the list.
      */
+    @NotNull
     override fun toString(): String {
         return JsonStringManager.jsonListToString(this, 0, 1)
     }
@@ -242,7 +268,8 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      * @param indent The number of spaces to use for indentation.
      * @return A formatted JSON string representing the list.
      */
-    fun toString(indent: Int): String {
+    @NotNull
+    fun toString(@NotNull indent: Int): String {
         return JsonStringManager.jsonListToString(this, indent, 1)
     }
 
@@ -269,6 +296,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
      *
      * @return A [MutableIterator] of [JsonValue].
      */
+    @NotNull
     override fun iterator(): MutableIterator<JsonValue> {
         return this.list.iterator()
     }
@@ -280,6 +308,7 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
          *
          * @return A new instance of [JsonList].
          */
+        @NotNull
         @JvmStatic
         fun create(): JsonList {
             return JsonList(arrayListOf())
@@ -291,9 +320,10 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
          * @param from The collection to convert.
          * @return A new [JsonList] containing the elements of the collection.
          */
+        @NotNull
         @JvmStatic
-        fun from(from: Collection<*>): JsonList {
-            return JsonList(from.map { JsonValue.handle(it) }.toCollection(ArrayList()))
+        fun from(@NotNull from: Collection<*>): JsonList {
+            return JsonList(from.map { JsonValue.recognize(it) }.toCollection(ArrayList()))
         }
 
         /**
@@ -302,8 +332,9 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
          * @param from The [JsonList] to copy.
          * @return A new [JsonList] containing the same elements.
          */
+        @NotNull
         @JvmStatic
-        fun from(from: JsonList): JsonList {
+        fun from(@NotNull from: JsonList): JsonList {
             return JsonList(from.list)
         }
 
@@ -314,10 +345,11 @@ class JsonList private constructor(private val list: ArrayList<JsonValue>): Muta
          * @return A new [JsonList] representing the JSON array.
          * @throws [IllegalJsonStringParsingException] If the string cannot be parsed as a JSON list.
          */
+        @NotNull
         @JvmStatic
         @Throws(IllegalJsonStringParsingException::class)
-        fun from(source: String): JsonList {
-            return JsonStringParser(source).parseList()
+        fun from(@NotNull source: String): JsonList {
+            return Parser(source).parseList()
         }
     }
 }
