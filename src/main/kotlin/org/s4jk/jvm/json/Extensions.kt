@@ -9,18 +9,17 @@ import org.s4jk.jvm.json.core.JsonValue
  * Constructs a [JsonObject] from a vararg of key-value pairs.
  * Each value is recognized as a [JsonValue] by the [JsonValue.recognize] method.
  *
- * @param entries A vararg of key-value pairs where each key is a [String]
- * and each value can be of [Any] type.
+ * @param entries A vararg of key-value pairs where each key is a [String] and each value can be of [Any] type.
  * @return A [JsonObject] containing the given entries.
  */
 @NotNull
 @JvmSynthetic
 fun jsonObjectOf(@NotNull vararg entries: Pair<String, Any?>): JsonObject {
-    return JsonObject(entries.associate { Pair(it.first, JsonValue.recognize(it.second)) })
+    return JsonObject(entries.associate { it.first to JsonValue.recognize(it.second) })
 }
 
 /**
- * Constructs a [JsonObject] using a builder-style [JsonObject] initialization block.
+ * Constructs a [JsonObject] using a DSL-style [JsonObject] initialization.
  *
  * @param buildAction The initialization block where entries can be added to the [JsonObject].
  * @return A [JsonObject] built from the provided [buildAction].
@@ -69,7 +68,7 @@ fun jsonListOf(vararg elements: Any?): JsonList {
 }
 
 /**
- * Constructs a [JsonList] using a builder-style [JsonList] initialization block.
+ * Constructs a [JsonList] using a DSL-style [JsonList] initialization.
  *
  * @param buildAction The initialization block where elements can be added to the [JsonList].
  * @return A [JsonList] built from the provided [buildAction].
@@ -101,7 +100,7 @@ fun Collection<*>.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun Array<*>.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList)
 }
 
 /**
@@ -114,7 +113,7 @@ fun Array<*>.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun CharArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.map { it.toString() })
+    return JsonList(this@toJsonList.map { it.toString() }.toTypedArray())
 }
 
 /**
@@ -126,7 +125,7 @@ fun CharArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun ByteArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**
@@ -138,7 +137,7 @@ fun ByteArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun ShortArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**
@@ -150,7 +149,7 @@ fun ShortArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun IntArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**
@@ -162,7 +161,7 @@ fun IntArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun DoubleArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**
@@ -175,7 +174,7 @@ fun DoubleArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun FloatArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.map { it.toDouble() })
+    return JsonList(this@toJsonList.map { it.toDouble() }.toTypedArray())
 }
 
 /**
@@ -187,7 +186,7 @@ fun FloatArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun LongArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**
@@ -199,7 +198,7 @@ fun LongArray.toJsonList(): JsonList {
 @NotNull
 @JvmSynthetic
 fun BooleanArray.toJsonList(): JsonList {
-    return JsonList(this@toJsonList.toList())
+    return JsonList(this@toJsonList.toTypedArray())
 }
 
 /**

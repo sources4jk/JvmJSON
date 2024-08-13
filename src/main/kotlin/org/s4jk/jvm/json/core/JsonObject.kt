@@ -1,134 +1,206 @@
 package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
-import org.s4jk.jvm.json.collections.JsonLinkedHashMap
+import org.jetbrains.annotations.Nullable
 import org.s4jk.jvm.json.string.JsonStringManager
 import org.s4jk.jvm.json.string.parsers.Parser
-import java.util.LinkedList
 import java.util.Spliterator
 import java.util.function.Consumer
 
 /**
- * The [JsonObject] class represents a mutable JSON object.
- * It implements the [JsonLinkedHashMap] interface and provides various methods
- * for manipulating JSON objects, such as adding, removing, and retrieving
- * entries. It also supports JSON serialization and deserialization.
+ * Represents a mutable JSON object. Provides methods to manipulate entries within the JSON structure.
+ * Implements [MutableIterable]<[JsonValue]> to allow iteration over the entries in the object.
+ *
+ * @property size The number of entries in this [JsonObject].
+ * @property entries A set view of the key-value pairs contained in this [JsonObject].
+ * @property keys A set of the keys contained in this [JsonObject].
+ * @property values A collection of the values contained in this [JsonObject].
  */
-class JsonObject(): JsonLinkedHashMap {
+class JsonObject(): MutableIterable<MutableMap.MutableEntry<String, JsonValue>> {
+    private val _map: HashMap<String, JsonValue> = HashMap()
 
     /**
-     * Constructs a new [JsonObject] by copying entries from another [JsonObject].
-     *
-     * @param from The [JsonObject] to copy.
+     * Creates an empty [JsonObject].
      */
-    constructor(from: JsonObject): this() {
-        this._entries.addAll(from._entries)
+    constructor(@NotNull from: JsonObject): this() {
+        this._map.putAll(from._map)
     }
 
     /**
-     * Constructs a new [JsonObject] from a [Map].
+     * Creates a [JsonObject] by copying entries from a given [JsonObject].
      *
-     * @param from The map to convert to a [JsonObject].
+     * @param from A [Map] from which to copy entries.
      */
-    constructor(from: Map<*, *>): this() {
-        this._entries.addAll(from.map { Node(it.key.toString(), JsonValue.recognize(it.value)) })
+    constructor(@NotNull from: Map<*, *>): this() {
+        this._map.putAll(from.map { it.key.toString() to JsonValue.recognize(it.value) })
     }
 
     /**
-     * Constructs a new [JsonObject] from a JSON-formatted string.
+     * Creates a [JsonObject] by parsing a JSON-formatted string.
      *
-     * @param from The JSON string to parse.
+     * @param from A JSON string to be parsed into a [JsonObject].
      */
-    constructor(from: String): this() {
+    constructor(@NotNull from: String): this() {
         JsonObject(Parser(from).parseObject())
     }
 
+    @get:NotNull
+    val size: Int get() = this._map.size
 
-    private val _entries: LinkedHashSet<JsonLinkedHashMap.Node> = LinkedHashSet()
+    @get:NotNull
+    val entries: Set<MutableMap.MutableEntry<String, JsonValue>> get() = this._map.entries
 
-    override val size: Int
-        get() = this._entries.size
+    @get:NotNull
+    val keys: Set<String> get() = this._map.map { it.key }.toSet()
 
-    override val entries: LinkedHashSet<JsonLinkedHashMap.Node>
-        get() = this._entries
+    @get:NotNull
+    val values: Collection<JsonValue> get() = this._map.map { it.value }
 
-    override val keys: LinkedHashSet<String>
-        get() = this._entries.map { it.key }.toCollection(LinkedHashSet())
-
-    override val values: LinkedList<JsonValue>
-        get() = this._entries.map { it.value }.toCollection(LinkedList())
-
-
-    override fun isEmpty(): Boolean {
-        return this._entries.isEmpty()
+    /**
+     * Checks if this [JsonObject] is empty.
+     *
+     * @return true if the [JsonObject] contains no entries.
+     */
+    @NotNull
+    fun isEmpty(): Boolean {
+        return this._map.isEmpty()
     }
 
-    override fun containsKey(key: String): Boolean {
-        return this._entries.find { it.key == key } != null
+    /**
+     * Checks if the specified key exists in this [JsonObject].
+     *
+     * @param key The key to check for.
+     * @return true if the key is present.
+     */
+    @NotNull
+    fun containsKey(@NotNull key: String): Boolean {
+        return this._map.filter { it.key == key }.isNotEmpty()
     }
 
-    override fun containsValue(value: Any?): Boolean {
-        return this._entries.find { it.value == JsonValue.recognize(value) } != null
+    /**
+     * Checks if the specified value exists in this [JsonObject].
+     *
+     * @param value The value to check for.
+     * @return true if the value is present.
+     */
+    @NotNull
+    fun containsValue(@Nullable value: Any?): Boolean {
+        return this._map.filter { it.value == JsonValue.recognize(value) }.isNotEmpty()
     }
 
-    override operator fun get(key: String): JsonValue {
-        return this._entries.find { it.key == key }?.value ?: JsonValue.NULL
+    /**
+     * Retrieves the value associated with the specified key.
+     *
+     * @param key The key whose associated value is to be returned.
+     * @return The value associated with the key, or [JsonValue.NULL] if the key is not found.
+     */
+    @NotNull
+    operator fun get(@NotNull key: String): JsonValue {
+        return this._map[key] ?: JsonValue.NULL
     }
 
-    override fun getOrDefault(key: String, defaultValue: Any?): JsonValue {
-        return this._entries.find { it.key == key }?.value ?: JsonValue.recognize(defaultValue)
+    /**
+     * Retrieves the value associated with the specified key, or returns a default value if the key is not found.
+     *
+     * @param key The key whose associated value is to be returned.
+     * @param defaultValue The value to return if the key is not found.
+     * @return The value associated with the key, or the default value if the key is not found.
+     */
+    @NotNull
+    fun getOrDefault(@NotNull key: String, @Nullable defaultValue: Any?): JsonValue {
+        return this._map.getOrDefault(key, JsonValue.recognize(defaultValue))
     }
 
-    override operator fun set(key: String, value: Any?): JsonValue {
-        this._entries.removeIf { it.key == key }.also { this._entries += Node(key, JsonValue.recognize(value)) }
-        return JsonValue.recognize(value)
+    /**
+     * Associates the specified value with the specified key in this [JsonObject].
+     *
+     * @param key The key with which the specified value is to be associated.
+     * @param value The value to be associated with the specified key.
+     * @return The previous value associated with the key, or null if there was no mapping for the key.
+     */
+    @NotNull
+    operator fun set(@NotNull key: String, @NotNull value: Any?): JsonValue? {
+        return this._map.put(key, JsonValue.recognize(value))
     }
 
-    override fun remove(key: String): JsonValue {
-        return this._entries.find { it.key == key }?.let { node ->
-            this._entries.remove(node)
-            node.value
-        } ?: JsonValue.NULL
+    /**
+     * Removes the entry associated with the specified key.
+     *
+     * @param key The key whose associated entry is to be removed.
+     * @return The value that was removed, or null if there was no mapping for the key.
+     */
+    @Nullable
+    fun remove(@NotNull key: String): JsonValue? {
+        return this._map.remove(key)
     }
 
-    override fun remove(key: String, value: Any?): Boolean {
-        return this.entries.removeIf { it.key == key && it.value == value }
+    /**
+     * Removes the entry associated with the specified key only if it is currently mapped to the specified value.
+     *
+     * @param key The key whose associated entry is to be removed.
+     * @param value The value expected to be associated with the specified key.
+     * @return true if the entry was removed.
+     */
+    @NotNull
+    fun remove(@NotNull key: String, @Nullable value: Any?): Boolean {
+        return this._map.remove(key, value)
     }
 
-    override fun clear() {
-        return this.entries.clear()
+    /**
+     * Removes all entries from this [JsonObject].
+     */
+    fun clear() {
+        return this._map.clear()
     }
 
+    /**
+     * Returns a string representation of the [JsonObject].
+     *
+     * @return A string representation of the [JsonObject].
+     */
+    @NotNull
     override fun toString(): String {
         return JsonStringManager.jsonObjectToString(this, 0, 1)
     }
 
-    override fun toString(indent: Int): String {
+    /**
+     * Returns a string representation of the [JsonObject] with the specified indentation.
+     *
+     * @param indent The indentation level to be used.
+     * @return A string representation of the [JsonObject].
+     */
+    @NotNull
+    fun toString(@NotNull indent: Int): String {
         return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
-    override fun forEach(@NotNull action: Consumer<in JsonLinkedHashMap.Node?>) {
-        return this.entries.forEach(action)
-    }
-
-    override fun spliterator(): Spliterator<JsonLinkedHashMap.Node> {
-        return this.entries.spliterator()
-    }
-
-    override fun iterator(): MutableIterator<JsonLinkedHashMap.Node> {
-        return this.entries.iterator()
+    /**
+     * Performs the given action for each entry in the [JsonObject].
+     *
+     * @param action The action to be performed for each entry.
+     */
+    @NotNull
+    override fun forEach(@NotNull action: Consumer<in MutableMap.MutableEntry<String, JsonValue>>?) {
+        return this._map.entries.forEach(action)
     }
 
     /**
-     * Represents a key-value pair in the JSON object.
-     * This class is used to store and retrieve individual entries in a [JsonObject].
-     * It holds a [key] of type [String] and a [value] of type [JsonValue].
+     * Creates a [Spliterator] over the entries in the [JsonObject].
      *
-     * @property key The key of the [Node].
-     * @property value The value of the [Node].
+     * @return A [Spliterator] over the entries in the [JsonObject].
      */
-    class Node(override val key: String, override val value: JsonValue): JsonLinkedHashMap.Node {
-        override fun component1(): String = this.key
-        override fun component2(): JsonValue = this.value
+    @NotNull
+    override fun spliterator(): Spliterator<MutableMap.MutableEntry<String, JsonValue>> {
+        return this._map.entries.spliterator()
+    }
+
+    /**
+     * Returns an iterator over the entries in the [JsonObject].
+     *
+     * @return An iterator over the entries in the [JsonObject].
+     */
+    @NotNull
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<String, JsonValue>> {
+        return this._map.entries.iterator()
     }
 }

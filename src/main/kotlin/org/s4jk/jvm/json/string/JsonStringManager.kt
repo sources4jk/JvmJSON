@@ -5,7 +5,6 @@ import org.s4jk.jvm.json.core.JsonList
 import org.s4jk.jvm.json.core.JsonObject
 import org.s4jk.jvm.json.core.JsonValue
 
-
 object JsonStringManager {
 
     private val spaces: (Int, Int) -> String = { indent, depth -> if (indent > 0) " ".repeat(indent * depth) else " " }
@@ -66,12 +65,8 @@ object JsonStringManager {
 
     private fun valueToString(value: JsonValue, indent: Int, depth: Int): String {
         return when (value.asAny()) {
-            is Number -> {
-                value.asNumber().toString()
-            }
-
-            is Boolean -> {
-                value.asBoolean().toString()
+            is Number, is Boolean -> {
+                value.asAny().toString()
             }
 
             is String -> {

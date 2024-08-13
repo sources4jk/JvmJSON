@@ -25,10 +25,7 @@ class CreateJson {
                 "key 5" to 5,
             )
         )
-
-        println(json.toString(4))
     }
-
 
     @Test
     fun createJsonObjectWithDSLStyle() {
@@ -118,6 +115,9 @@ class CreateJson {
             }
         )
 
+        /**
+         * create [JsonList] form existing [JsonList]
+         */
         JsonList(list)
     }
 
