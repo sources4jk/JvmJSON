@@ -20,7 +20,6 @@ object JsonStringManager {
 
         return buildString {
             append("{").append(tabs(indent))
-
             json.entries.forEachIndexed { index, (key, value) ->
                 append(spaces(indent, depth))
                 append("\"${key}\": ").append(valueToString(value, indent, depth + 1))

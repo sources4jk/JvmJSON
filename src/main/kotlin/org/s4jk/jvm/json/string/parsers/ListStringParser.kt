@@ -5,7 +5,7 @@ import org.s4jk.jvm.json.core.JsonList
 
 class ListStringParser(private val parser: Parser) {
     fun parse(): JsonList {
-        val list = JsonList.create()
+        val list = JsonList()
         this.parser.advanceIndex()
         this.parser.skipWhitespaces()
 

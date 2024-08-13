@@ -6,17 +6,17 @@ import org.s4jk.jvm.json.core.JsonValue
 import java.util.LinkedList
 
 /**
- * The [JsonMap] interface represents a mutable map of JSON values.
+ * The [JsonLinkedHashMap] interface represents a mutable map of JSON values.
  * It provides various methods to manipulate the map, such as adding,
  * removing, and searching for entries. The interface extends the
- * [MutableIterable]<[JsonMap.Node]> interface.
+ * [MutableIterable]<[JsonLinkedHashMap.Node]> interface.
  *
  * @property size The number of entries in the map.
- * @property entries The underlying [HashSet] that stores [JsonMap.Node] objects.
+ * @property entries The underlying [HashSet] that stores [JsonLinkedHashMap.Node] objects.
  * @property keys The set of keys in the map.
  * @property values The list of values in the map.
  */
-interface JsonMap: MutableIterable<JsonMap.Node> {
+interface JsonLinkedHashMap: MutableIterable<JsonLinkedHashMap.Node> {
 
     @get:NotNull
     val size: Int

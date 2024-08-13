@@ -10,8 +10,6 @@ class JsonValueTypeCastException(value: Any?, cast: KClass<*>): RuntimeException
     "${value?.javaClass?.name} cannot be cast to $cast"
 )
 
-class JsonValueNullException(value: Any?): RuntimeException(
-    "${value?.javaClass?.name} cannot be null"
-)
+class JsonValueNullException: RuntimeException("Value cannot be null")
 
 class IllegalJsonStringParsingException(message: String): RuntimeException(message)

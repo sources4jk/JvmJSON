@@ -1,7 +1,7 @@
 package org.s4jk.jvm.json.core
 
 import org.jetbrains.annotations.NotNull
-import org.s4jk.jvm.json.collections.JsonMap
+import org.s4jk.jvm.json.collections.JsonLinkedHashMap
 import org.s4jk.jvm.json.string.JsonStringManager
 import org.s4jk.jvm.json.string.parsers.Parser
 import java.util.LinkedList
@@ -10,11 +10,11 @@ import java.util.function.Consumer
 
 /**
  * The [JsonObject] class represents a mutable JSON object.
- * It implements the [JsonMap] interface and provides various methods
+ * It implements the [JsonLinkedHashMap] interface and provides various methods
  * for manipulating JSON objects, such as adding, removing, and retrieving
  * entries. It also supports JSON serialization and deserialization.
  */
-class JsonObject(): JsonMap {
+class JsonObject(): JsonLinkedHashMap {
 
     /**
      * Constructs a new [JsonObject] by copying entries from another [JsonObject].
@@ -22,7 +22,7 @@ class JsonObject(): JsonMap {
      * @param from The [JsonObject] to copy.
      */
     constructor(from: JsonObject): this() {
-        this._entries.addAll(from.entries)
+        this._entries.addAll(from._entries)
     }
 
     /**
@@ -44,13 +44,13 @@ class JsonObject(): JsonMap {
     }
 
 
-    private val _entries: LinkedHashSet<JsonMap.Node> = LinkedHashSet()
+    private val _entries: LinkedHashSet<JsonLinkedHashMap.Node> = LinkedHashSet()
 
     override val size: Int
         get() = this._entries.size
 
-    override val entries: LinkedHashSet<JsonMap.Node>
-        get() = _entries
+    override val entries: LinkedHashSet<JsonLinkedHashMap.Node>
+        get() = this._entries
 
     override val keys: LinkedHashSet<String>
         get() = this._entries.map { it.key }.toCollection(LinkedHashSet())
@@ -100,22 +100,22 @@ class JsonObject(): JsonMap {
     }
 
     override fun toString(): String {
-        return this.toString(0)
+        return JsonStringManager.jsonObjectToString(this, 0, 1)
     }
 
     override fun toString(indent: Int): String {
         return JsonStringManager.jsonObjectToString(this, indent, 1)
     }
 
-    override fun forEach(@NotNull action: Consumer<in JsonMap.Node?>) {
+    override fun forEach(@NotNull action: Consumer<in JsonLinkedHashMap.Node?>) {
         return this.entries.forEach(action)
     }
 
-    override fun spliterator(): Spliterator<JsonMap.Node> {
+    override fun spliterator(): Spliterator<JsonLinkedHashMap.Node> {
         return this.entries.spliterator()
     }
 
-    override fun iterator(): MutableIterator<JsonMap.Node> {
+    override fun iterator(): MutableIterator<JsonLinkedHashMap.Node> {
         return this.entries.iterator()
     }
 
@@ -127,7 +127,7 @@ class JsonObject(): JsonMap {
      * @property key The key of the [Node].
      * @property value The value of the [Node].
      */
-    class Node(override val key: String, override val value: JsonValue): JsonMap.Node {
+    class Node(override val key: String, override val value: JsonValue): JsonLinkedHashMap.Node {
         override fun component1(): String = this.key
         override fun component2(): JsonValue = this.value
     }

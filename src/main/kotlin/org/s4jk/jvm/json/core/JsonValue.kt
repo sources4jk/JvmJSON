@@ -3,6 +3,7 @@ package org.s4jk.jvm.json.core
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.s4jk.jvm.json.IllegalJsonValueTypeException
+import org.s4jk.jvm.json.JsonValueNullException
 import org.s4jk.jvm.json.JsonValueTypeCastException
 
 class JsonValue(private val value: Any?) {
@@ -54,9 +55,14 @@ class JsonValue(private val value: Any?) {
     @NotNull
     @Throws(JsonValueTypeCastException::class)
     private inline fun <reified T> castToType(value: Any?): T {
+        if (value == null) {
+            throw JsonValueNullException()
+        }
+
         if (value !is T) {
             throw JsonValueTypeCastException(value, T::class)
         }
+
         return value
     }
 
